@@ -5,7 +5,7 @@ module introducao::desafio_logo {
 
     /// ------------------------------------------------------------------------------------
     /// Desafio: Logo ASCII - Bootcamp Sui Move
-    /// Autor: Cleverson Silva
+    /// Autor: Cleverson
     /// ------------------------------------------------------------------------------------
 
     const ENotReady: u64 = 0;

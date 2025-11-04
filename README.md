@@ -6,7 +6,7 @@ Este repositório contém os desafios e projetos desenvolvidos durante o Bootcam
 
 ## 👨‍💻 Autor
 
-**Cleverson Silva**
+**Cleverson**
 
 ## 🚀 Como Executar
 
@@ -173,6 +173,6 @@ Este projeto é parte do Bootcamp Sui Move e é usado para fins educacionais.
 
 ---
 
-**Desenvolvido com ❤️ por Cleverson Silva**
+**Desenvolvido com ❤️ por Cleverson**
 
 *Bootcamp Sui Move - 2025*

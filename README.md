@@ -6,7 +6,7 @@ Este repositório contém os desafios e projetos desenvolvidos durante o Bootcam
 
 ## 👨‍💻 Autor
 
-**Cleverson Silva** - Especialista em ADVPL
+**Cleverson Silva**
 
 ## 🚀 Como Executar
 

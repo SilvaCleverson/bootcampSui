@@ -1,261 +1,118 @@
-# 🌊 Bootcamp Sui Move
+# 🌊 Sui Move Bootcamp
 
-## 📋 Sobre o Bootcamp
+> **Choose your language / Escolha seu idioma / Elige tu idioma**
+> 
+> - 🇧🇷 [Português (Brasil)](README.pt.md)
+> - 🇺🇸 [English](README.en.md)
+> - 🇪🇸 [Español](README.es.md)
 
-Este repositório contém os desafios e projetos desenvolvidos durante o **Sui MOVE Bootcamp Brasil**. Cada desafio demonstra diferentes conceitos e funcionalidades da linguagem Move na plataforma Sui.
+---
 
-### 🎯 Informações do Bootcamp
+## 📋 About the Bootcamp
 
-- **Nome:** Sui MOVE Bootcamp Brasil
-- **Período:** De 03 a 17 de Novembro
-- **Formato:** Aulas online
-- **Nível:** Iniciante ao Intermediário
-- **Horário:** 19h às 20h (horário do Brasil)
-- **Certificação:** Certificado oficial Sui Developer
-- **Flexibilidade:** As aulas ficam gravadas, você pode fazer no seu horário
+This repository contains challenges and projects developed during the **Sui MOVE Bootcamp Brasil**. Each challenge demonstrates different concepts and functionalities of the Move language on the Sui platform.
 
-**Organizadores:**
+### 🎯 Bootcamp Information
+
+- **Name:** Sui MOVE Bootcamp Brasil
+- **Period:** November 3rd to 17th
+- **Format:** Online classes
+- **Level:** Beginner to Intermediate
+- **Schedule:** 7 PM to 8 PM (Brazil time)
+- **Certification:** Official Sui Developer Certificate
+- **Flexibility:** Recorded classes, you can watch at your own pace
+
+**Organizers:**
 - Sui
 - WayLearn
 - ParaBuilders
 
-**Inscrições:** [luma.com/wxsj6hjy](https://luma.com/wxsj6hjy)
+**Registration:** [luma.com/wxsj6hjy](https://luma.com/wxsj6hjy)
 
-## 👨‍💻 Autor
+## 👨‍💻 Author
 
 **Cleverson Silva**
 
-## 🚀 Como Executar
+## 🚀 Quick Start
 
-### 🔧 Instalação Automática (Windows)
+For detailed installation and usage instructions, please select your preferred language:
+- 🇧🇷 [Português (Brasil)](README.pt.md) - Complete guide with ADVPL comparisons
+- 🇺🇸 [English](README.en.md) - Full documentation
+- 🇪🇸 [Español](README.es.md) - Documentación completa
 
-Este projeto inclui um instalador de 1 clique para Windows que instala automaticamente:
-- **Sui CLI**
-- **Git**
-- **Visual Studio Code**
+### Quick Test
 
-#### Passo a Passo:
-
-1. **Navegue até a pasta `instalador`:**
-   ```bash
-   cd bootcampSui\instalador
-   ```
-
-2. **Execute o instalador:**
-   - Clique com o botão direito em `Instalar_Sui.bat`
-   - Selecione **"Executar como administrador"**
-   - Ou simplesmente dê duplo clique (o script solicitará permissões automaticamente)
-
-3. **Aguarde a instalação:**
-   - O instalador usará o Chocolatey para instalar os programas
-   - Todo o processo será registrado no arquivo `instalacao_sui.log`
-
-4. **Verifique a instalação:**
-   - Abra um **novo PowerShell** (importante: feche e abra novamente)
-   - Execute os comandos para verificar:
-     ```bash
-     sui --version
-     git --version
-     code --version
-     ```
-
-5. **Próximos passos após instalação:**
-   ```bash
-   # Configurar o cliente Sui
-   sui client
-   
-   # Selecionar a rede (testnet/devnet/mainnet)
-   # Criar novo endereço
-   sui client new-address ed25519
-   
-   # Obter tokens de teste (se necessário)
-   sui client faucet
-   ```
-
-#### ⚠️ Solução de Problemas
-
-- Se algum comando não for reconhecido após a instalação, **feche e abra um novo terminal**
-- Se a instalação falhar, consulte o arquivo `instalacao_sui.log` na pasta `instalador`
-- Certifique-se de executar como administrador
-
-### 📦 Instalação Manual
-
-Se preferir instalar manualmente ou estiver em outro sistema operacional:
-
-1. **Instalar Sui CLI:**
-   - Siga as instruções em: [Sui Documentation](https://docs.sui.io/build/install)
-   - Verifique a instalação: `sui --version`
-
-2. **Instalar Git:**
-   - Windows: [Git for Windows](https://git-scm.com/download/win)
-   - Verifique: `git --version`
-
-3. **Instalar VS Code:**
-   - [VS Code Download](https://code.visualstudio.com/)
-   - Verifique: `code --version`
-
-### 🏃 Executar os Testes
-
-Após a instalação, navegue até o diretório do projeto:
 ```bash
 cd bootcampSui
-```
-
-E execute os testes:
-
-### Executar os Testes
-
-```bash
 sui move test
 ```
 
-Isso executará todos os testes de todos os desafios no projeto.
-
-## 📁 Estrutura do Projeto
+## 📁 Project Structure
 
 ```
 bootcampSui/
-├── Move.toml              # Configuração do pacote Move
-├── README.md              # Este arquivo
-├── .gitignore             # Arquivos ignorados pelo Git
-├── instalador/            # Scripts de instalação automática
-│   ├── Instalar_Sui.bat   # Instalador principal (Windows)
-│   ├── script_sui.ps1      # Script PowerShell de instalação
-│   └── README.txt         # Instruções do instalador
+├── Move.toml              # Move package configuration
+├── README.md              # This file (main)
+├── README.pt.md           # Portuguese version
+├── README.en.md           # English version
+├── README.es.md           # Spanish version
+├── .gitignore             # Git ignored files
+├── instalador/            # Automatic installation scripts
+│   ├── Instalar_Sui.bat   # Main installer (Windows)
+│   ├── script_sui.ps1      # PowerShell installation script
+│   └── README.txt          # Installer instructions
 └── sources/
-    ├── desafio_logo.move  # Desafio 01: Logo ASCII
-    └── ...                # Outros desafios serão adicionados aqui
+    ├── desafio_logo.move  # Challenge 01: ASCII Logo
+    └── ...                # More challenges will be added here
 ```
 
-## 📚 Desafios
+## 📚 Challenges
 
-### Desafio 01: Logo ASCII 🎨
+### Challenge 01: ASCII Logo 🎨
 
-**Arquivo:** `sources/desafio_logo.move`
+**File:** `sources/desafio_logo.move`
 
-**Objetivo:** Imprimir o logo ASCII da Sui usando funções auxiliares e laços.
+**Objective:** Print the Sui ASCII logo using helper functions and loops.
 
-**Conceitos Demonstrados:**
-- Funções auxiliares
-- Laços (`while`)
-- Vetores de bytes
-- Testes unitários
+**Concepts Demonstrated:**
+- Helper functions
+- Loops (`while`)
+- Byte vectors
+- Unit tests
 
-**Como executar:**
+**How to run:**
 ```bash
 cd bootcampSui
 sui move test desafio_logo
 ```
 
-**Resultado Esperado:**
-O comando imprime o logo ASCII completo da Sui no console.
+**Expected Result:**
+The command prints the complete Sui ASCII logo in the console.
 
 ---
 
-*Mais desafios serão adicionados conforme o progresso do bootcamp.*
+*More challenges will be added as the bootcamp progresses.*
 
-## 🔍 Explicação para Desenvolvedores ADVPL
+## 🛠️ Technologies
 
-### Comparação com ADVPL
-
-| ADVPL | Move | Função |
-|-------|------|--------|
-| `User Function` | `fun` com `#[test]` | Função principal executável |
-| `Static Function` | `fun` (sem `#[test]`) | Função auxiliar/helper |
-| `While ... EndDo` | `while (...) { }` | Laço de repetição |
-| `ConOut()` | `print()` | Imprime no console |
-| `cTexto := "Hello"` | `b"Hello"` + `utf8()` | String (byte string) |
-| `#Define CONST 0` | `const CONST: u64 = 0` | Constante |
-| `#Include` | `use` | Importar bibliotecas |
-
-### Conceitos Principais
-
-#### 1. Módulos
-Em Move, o código é organizado em módulos. É similar a ter uma classe ou conjunto de funções estáticas em ADVPL.
-
-```move
-module introducao::desafio_logo {
-    // código aqui
-}
-```
-
-#### 2. Funções
-- Funções privadas: `fun nome_funcao()`
-- Funções públicas: `public fun nome_funcao()`
-- Funções de teste: `#[test] fun nome_funcao()`
-
-#### 3. Tipos de Dados
-- `u8`, `u16`, `u32`, `u64`: Números inteiros sem sinal
-- `bool`: Booleano (true/false)
-- `vector<T>`: Vetor/array de elementos do tipo T
-- `address`: Endereço na blockchain
-
-#### 4. Laços
-Move usa `while` para laços:
-
-```move
-let i = 0;
-while (i < 10) {
-    // código aqui
-    i = i + 1;
-}
-```
-
-## 🧪 Testes
-
-Cada desafio contém testes unitários marcados com `#[test]`.
-
-### Executar todos os testes:
-```bash
-sui move test
-```
-
-### Executar um teste específico:
-```bash
-sui move test nome_do_teste
-```
-
-## 📚 Conceitos Aprendidos
-
-- ✅ **Funções auxiliares**: Reutilização de código
-- ✅ **Laços (`while`)**: Repetição de operações
-- ✅ **Vetores de bytes**: Manipulação de strings em Move
-- ✅ **Testes unitários**: Validação do código
-- ✅ **Modularização**: Organização do código em funções
-- ✅ **Constantes**: Definição de valores fixos
-- ✅ **Imports**: Uso de bibliotecas padrão
-
-## 🛠️ Tecnologias
-
-- **Linguagem**: Move (Sui)
-- **Plataforma**: Sui Blockchain
+- **Language**: Move (Sui)
+- **Platform**: Sui Blockchain
 - **CLI**: Sui CLI
-- **Editor**: VS Code (recomendado)
+- **Editor**: VS Code (recommended)
 
-## 📖 Referências
+## 📖 References
 
-- [Documentação Move](https://move-language.github.io/move/)
-- [Documentação Sui](https://docs.sui.io/)
+- [Move Documentation](https://move-language.github.io/move/)
+- [Sui Documentation](https://docs.sui.io/)
 - [Move Book](https://move-book.com/)
 - [Sui Developers](https://sui.io/developers)
 
-## 📝 Notas do Desenvolvedor
+## 📄 License
 
-Este bootcamp foi uma jornada de aprendizado vindo de ADVPL para Move. As comparações com ADVPL ajudam a entender melhor os conceitos de Move.
-
-### Dicas para Iniciantes:
-
-1. **Tipos são obrigatórios**: Move é fortemente tipado, diferente de ADVPL
-2. **Ownership é importante**: Move usa um sistema de propriedade único
-3. **Testes são essenciais**: Use `#[test]` para validar seu código
-4. **Strings são bytes**: Em Move, strings são `vector<u8>` e precisam ser convertidas
-
-## 📄 Licença
-
-Este projeto é parte do Bootcamp Sui Move e é usado para fins educacionais.
+This project is part of the Sui Move Bootcamp and is used for educational purposes.
 
 ---
 
-**Desenvolvido com ❤️ por Cleverson**
+**Developed with ❤️ by Cleverson Silva**
 
-*Bootcamp Sui Move - 2025*
+*Sui Move Bootcamp - 2025*

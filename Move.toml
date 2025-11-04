@@ -1,0 +1,9 @@
+[package]
+name = "BootcampSui"
+version = "0.0.0"
+
+[addresses]
+introducao = "0x5A6F6E612054726573"
+
+[dependencies]
+

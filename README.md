@@ -21,32 +21,87 @@ Este repositório contém os desafios e projetos desenvolvidos durante o **Sui M
 
 **Inscrições:** [luma.com/wxsj6hjy](https://luma.com/wxsj6hjy)
 
-### 🌎 Horários por País
-
-- 🇲🇽 México: 17h
-- 🇨🇴 Colômbia: 18h
-- 🇦🇷 Argentina: 19h
-- 🇧🇷 Brasil: 20h
-
 ## 👨‍💻 Autor
 
-**Cleverson**
+**Cleverson Silva**
 
 ## 🚀 Como Executar
 
-### Pré-requisitos
+### 🔧 Instalação Automática (Windows)
+
+Este projeto inclui um instalador de 1 clique para Windows que instala automaticamente:
+- **Sui CLI**
+- **Git**
+- **Visual Studio Code**
+
+#### Passo a Passo:
+
+1. **Navegue até a pasta `instalador`:**
+   ```bash
+   cd bootcampSui\instalador
+   ```
+
+2. **Execute o instalador:**
+   - Clique com o botão direito em `Instalar_Sui.bat`
+   - Selecione **"Executar como administrador"**
+   - Ou simplesmente dê duplo clique (o script solicitará permissões automaticamente)
+
+3. **Aguarde a instalação:**
+   - O instalador usará o Chocolatey para instalar os programas
+   - Todo o processo será registrado no arquivo `instalacao_sui.log`
+
+4. **Verifique a instalação:**
+   - Abra um **novo PowerShell** (importante: feche e abra novamente)
+   - Execute os comandos para verificar:
+     ```bash
+     sui --version
+     git --version
+     code --version
+     ```
+
+5. **Próximos passos após instalação:**
+   ```bash
+   # Configurar o cliente Sui
+   sui client
+   
+   # Selecionar a rede (testnet/devnet/mainnet)
+   # Criar novo endereço
+   sui client new-address ed25519
+   
+   # Obter tokens de teste (se necessário)
+   sui client faucet
+   ```
+
+#### ⚠️ Solução de Problemas
+
+- Se algum comando não for reconhecido após a instalação, **feche e abra um novo terminal**
+- Se a instalação falhar, consulte o arquivo `instalacao_sui.log` na pasta `instalador`
+- Certifique-se de executar como administrador
+
+### 📦 Instalação Manual
+
+Se preferir instalar manualmente ou estiver em outro sistema operacional:
 
 1. **Instalar Sui CLI:**
-   ```bash
-   sui --version
-   ```
-   
-   Se não tiver instalado, siga as instruções em: [Sui Documentation](https://docs.sui.io/build/install)
+   - Siga as instruções em: [Sui Documentation](https://docs.sui.io/build/install)
+   - Verifique a instalação: `sui --version`
 
-2. **Navegar até o diretório do projeto:**
-   ```bash
-   cd bootcampSui
-   ```
+2. **Instalar Git:**
+   - Windows: [Git for Windows](https://git-scm.com/download/win)
+   - Verifique: `git --version`
+
+3. **Instalar VS Code:**
+   - [VS Code Download](https://code.visualstudio.com/)
+   - Verifique: `code --version`
+
+### 🏃 Executar os Testes
+
+Após a instalação, navegue até o diretório do projeto:
+```bash
+cd bootcampSui
+```
+
+E execute os testes:
 
 ### Executar os Testes
 
@@ -63,6 +118,10 @@ bootcampSui/
 ├── Move.toml              # Configuração do pacote Move
 ├── README.md              # Este arquivo
 ├── .gitignore             # Arquivos ignorados pelo Git
+├── instalador/            # Scripts de instalação automática
+│   ├── Instalar_Sui.bat   # Instalador principal (Windows)
+│   ├── script_sui.ps1      # Script PowerShell de instalação
+│   └── README.txt         # Instruções do instalador
 └── sources/
     ├── desafio_logo.move  # Desafio 01: Logo ASCII
     └── ...                # Outros desafios serão adicionados aqui

@@ -1,12 +1,8 @@
-# 🎨 Desafio Logo ASCII - Bootcamp Sui Move
+# 🌊 Bootcamp Sui Move
 
-## 📋 Sobre o Desafio
+## 📋 Sobre o Bootcamp
 
-Este projeto implementa a impressão do logo ASCII da Sui usando a linguagem Move. O desafio demonstra o uso de:
-- Funções auxiliares
-- Laços (`while`)
-- Vetores de bytes
-- Testes unitários
+Este repositório contém os desafios e projetos desenvolvidos durante o Bootcamp Sui Move. Cada desafio demonstra diferentes conceitos e funcionalidades da linguagem Move na plataforma Sui.
 
 ## 👨‍💻 Autor
 
@@ -16,12 +12,14 @@ Este projeto implementa a impressão do logo ASCII da Sui usando a linguagem Mov
 
 ### Pré-requisitos
 
-1. Instalar Sui CLI:
+1. **Instalar Sui CLI:**
    ```bash
    sui --version
    ```
+   
+   Se não tiver instalado, siga as instruções em: [Sui Documentation](https://docs.sui.io/build/install)
 
-2. Navegar até o diretório do projeto:
+2. **Navegar até o diretório do projeto:**
    ```bash
    cd bootcampSui
    ```
@@ -32,73 +30,48 @@ Este projeto implementa a impressão do logo ASCII da Sui usando a linguagem Mov
 sui move test
 ```
 
-### Resultado Esperado
-
-O comando deve imprimir o logo ASCII da Sui no console e mostrar:
-
-```
-[debug] "===================================================================================================="
-[debug] "===================================================================================================="
-... (logo completo)
-[debug] "===================================================================================================="
-[ PASS ] introducao::desafio_logo::desafio_logo
-[ PASS ] introducao::desafio_logo::desafio_logo_fail
-Test result: OK. Total tests: 2; passed: 2; failed: 0
-```
+Isso executará todos os testes de todos os desafios no projeto.
 
 ## 📁 Estrutura do Projeto
 
 ```
 bootcampSui/
-├── Move.toml          # Configuração do pacote Move
-├── README.md          # Este arquivo
-├── .gitignore         # Arquivos ignorados pelo Git
+├── Move.toml              # Configuração do pacote Move
+├── README.md              # Este arquivo
+├── .gitignore             # Arquivos ignorados pelo Git
 └── sources/
-    └── desafio_logo.move  # Código principal do desafio
+    ├── desafio_logo.move  # Desafio 01: Logo ASCII
+    └── ...                # Outros desafios serão adicionados aqui
 ```
 
-## 📝 Estrutura do Código
+## 📚 Desafios
 
-### Módulo Principal
+### Desafio 01: Logo ASCII 🎨
 
-```move
-module introducao::desafio_logo
+**Arquivo:** `sources/desafio_logo.move`
+
+**Objetivo:** Imprimir o logo ASCII da Sui usando funções auxiliares e laços.
+
+**Conceitos Demonstrados:**
+- Funções auxiliares
+- Laços (`while`)
+- Vetores de bytes
+- Testes unitários
+
+**Como executar:**
+```bash
+cd bootcampSui
+sui move test desafio_logo
 ```
 
-### Funções
+**Resultado Esperado:**
+O comando imprime o logo ASCII completo da Sui no console.
 
-#### 1. `print_line(line: vector<u8>)`
-Função auxiliar que imprime uma linha ASCII no console.
+---
 
-**Parâmetros:**
-- `line`: Vetor de bytes contendo a linha a ser impressa
+*Mais desafios serão adicionados conforme o progresso do bootcamp.*
 
-**Exemplo:**
-```move
-print_line(b"=== Linha exemplo ===");
-```
-
-#### 2. `repeat_line(line: vector<u8>, n: u64)`
-Função auxiliar que repete uma linha N vezes usando um laço.
-
-**Parâmetros:**
-- `line`: Vetor de bytes contendo a linha a ser repetida
-- `n`: Número de vezes que a linha será repetida
-
-**Exemplo:**
-```move
-repeat_line(b"====", 5);  // Imprime 5 vezes
-```
-
-#### 3. `desafio_logo()`
-Função principal do desafio que imprime o logo completo da Sui.
-
-**Estrutura:**
-- Cabeçalho: 9 linhas de `===`
-- Corpo: 47 linhas únicas do logo ASCII
-- Rodapé: 9 linhas de `===`
-
-## 🔍 Explicação do Código (para desenvolvedores ADVPL)
+## 🔍 Explicação para Desenvolvedores ADVPL
 
 ### Comparação com ADVPL
 
@@ -109,61 +82,97 @@ Função principal do desafio que imprime o logo completo da Sui.
 | `While ... EndDo` | `while (...) { }` | Laço de repetição |
 | `ConOut()` | `print()` | Imprime no console |
 | `cTexto := "Hello"` | `b"Hello"` + `utf8()` | String (byte string) |
+| `#Define CONST 0` | `const CONST: u64 = 0` | Constante |
+| `#Include` | `use` | Importar bibliotecas |
 
-### Fluxo de Execução
+### Conceitos Principais
 
+#### 1. Módulos
+Em Move, o código é organizado em módulos. É similar a ter uma classe ou conjunto de funções estáticas em ADVPL.
+
+```move
+module introducao::desafio_logo {
+    // código aqui
+}
 ```
-desafio_logo() (função principal)
-    │
-    ├─→ repeat_line() (repetir linha 9x)
-    │       │
-    │       └─→ print_line() (imprime cada linha)
-    │
-    ├─→ print_line() (imprime cada linha única do corpo - 47x)
-    │
-    └─→ repeat_line() (repetir linha 9x)
-            │
-            └─→ print_line() (imprime cada linha)
+
+#### 2. Funções
+- Funções privadas: `fun nome_funcao()`
+- Funções públicas: `public fun nome_funcao()`
+- Funções de teste: `#[test] fun nome_funcao()`
+
+#### 3. Tipos de Dados
+- `u8`, `u16`, `u32`, `u64`: Números inteiros sem sinal
+- `bool`: Booleano (true/false)
+- `vector<T>`: Vetor/array de elementos do tipo T
+- `address`: Endereço na blockchain
+
+#### 4. Laços
+Move usa `while` para laços:
+
+```move
+let i = 0;
+while (i < 10) {
+    // código aqui
+    i = i + 1;
+}
 ```
 
 ## 🧪 Testes
 
-O projeto contém 2 testes:
+Cada desafio contém testes unitários marcados com `#[test]`.
 
-1. **`desafio_logo()`**: Teste principal que imprime o logo
-2. **`desafio_logo_fail()`**: Teste que verifica tratamento de erro (deve falhar propositalmente)
-
-### Executar apenas um teste específico
-
+### Executar todos os testes:
 ```bash
-sui move test desafio_logo
+sui move test
 ```
 
-## 📚 Conceitos Demonstrados
+### Executar um teste específico:
+```bash
+sui move test nome_do_teste
+```
+
+## 📚 Conceitos Aprendidos
 
 - ✅ **Funções auxiliares**: Reutilização de código
 - ✅ **Laços (`while`)**: Repetição de operações
 - ✅ **Vetores de bytes**: Manipulação de strings em Move
 - ✅ **Testes unitários**: Validação do código
 - ✅ **Modularização**: Organização do código em funções
+- ✅ **Constantes**: Definição de valores fixos
+- ✅ **Imports**: Uso de bibliotecas padrão
 
 ## 🛠️ Tecnologias
 
 - **Linguagem**: Move (Sui)
 - **Plataforma**: Sui Blockchain
 - **CLI**: Sui CLI
+- **Editor**: VS Code (recomendado)
 
 ## 📖 Referências
 
 - [Documentação Move](https://move-language.github.io/move/)
 - [Documentação Sui](https://docs.sui.io/)
 - [Move Book](https://move-book.com/)
+- [Sui Developers](https://sui.io/developers)
+
+## 📝 Notas do Desenvolvedor
+
+Este bootcamp foi uma jornada de aprendizado vindo de ADVPL para Move. As comparações com ADVPL ajudam a entender melhor os conceitos de Move.
+
+### Dicas para Iniciantes:
+
+1. **Tipos são obrigatórios**: Move é fortemente tipado, diferente de ADVPL
+2. **Ownership é importante**: Move usa um sistema de propriedade único
+3. **Testes são essenciais**: Use `#[test]` para validar seu código
+4. **Strings são bytes**: Em Move, strings são `vector<u8>` e precisam ser convertidas
 
 ## 📄 Licença
 
-Este projeto é parte do Bootcamp Sui Move.
+Este projeto é parte do Bootcamp Sui Move e é usado para fins educacionais.
 
 ---
 
 **Desenvolvido com ❤️ por Cleverson Silva**
 
+*Bootcamp Sui Move - 2025*

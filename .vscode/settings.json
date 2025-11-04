@@ -1,0 +1,15 @@
+{
+  "[move]": {
+    "editor.defaultFormatter": "mysten.prettier-move",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  "files.associations": {
+    "*.move": "move"
+  },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  }
+}
+

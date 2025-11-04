@@ -2,7 +2,31 @@
 
 ## 📋 Sobre o Bootcamp
 
-Este repositório contém os desafios e projetos desenvolvidos durante o Bootcamp Sui Move. Cada desafio demonstra diferentes conceitos e funcionalidades da linguagem Move na plataforma Sui.
+Este repositório contém os desafios e projetos desenvolvidos durante o **Sui MOVE Bootcamp Brasil**. Cada desafio demonstra diferentes conceitos e funcionalidades da linguagem Move na plataforma Sui.
+
+### 🎯 Informações do Bootcamp
+
+- **Nome:** Sui MOVE Bootcamp Brasil
+- **Período:** De 03 a 17 de Novembro
+- **Formato:** Aulas online
+- **Nível:** Iniciante ao Intermediário
+- **Horário:** 19h às 20h (horário do Brasil)
+- **Certificação:** Certificado oficial Sui Developer
+- **Flexibilidade:** As aulas ficam gravadas, você pode fazer no seu horário
+
+**Organizadores:**
+- Sui
+- WayLearn
+- ParaBuilders
+
+**Inscrições:** [luma.com/wxsj6hjy](https://luma.com/wxsj6hjy)
+
+### 🌎 Horários por País
+
+- 🇲🇽 México: 17h
+- 🇨🇴 Colômbia: 18h
+- 🇦🇷 Argentina: 19h
+- 🇧🇷 Brasil: 20h
 
 ## 👨‍💻 Autor
 

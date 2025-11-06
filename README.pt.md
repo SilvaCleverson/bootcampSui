@@ -121,8 +121,9 @@ bootcampSui/
 │   ├── script_sui.ps1      # Script PowerShell de instalação
 │   └── README.txt         # Instruções do instalador
 └── sources/
-    ├── desafio_logo.move  # Desafio 01: Logo ASCII
-    └── ...                # Outros desafios serão adicionados aqui
+    ├── desafio_logo.move      # Desafio 01: Logo ASCII
+    ├── exemplo_funcoes.move   # Exemplo: Tipos de Funções
+    └── ...                    # Outros desafios serão adicionados aqui
 ```
 
 ## 📚 Desafios
@@ -147,6 +148,34 @@ sui move test desafio_logo
 
 **Resultado Esperado:**
 O comando imprime o logo ASCII completo da Sui no console.
+
+---
+
+### 📚 Exemplo: Tipos de Funções
+
+**Arquivo:** `sources/exemplo_funcoes.move`
+
+**Objetivo:** Demonstrar os diferentes tipos de funções em Move e quando usar cada uma.
+
+**Conceitos Demonstrados:**
+- `fun` - Funções privadas/auxiliares
+- `public fun` - Funções públicas (outros módulos podem chamar)
+- `public entry fun` - Funções de entrada (vão para blockchain)
+- `#[test] fun` - Funções de teste (apenas desenvolvimento)
+
+**Comparação com ADVPL:**
+- `fun` = `Static Function` (auxiliar)
+- `public entry fun` = `User Function` (principal)
+- `#[test] fun` = Função de teste
+
+**Como executar:**
+```bash
+cd bootcampSui
+sui move test exemplo_funcoes
+```
+
+**Resultado Esperado:**
+O comando executa todos os testes e mostra os resultados de processamento de pagamento.
 
 ---
 

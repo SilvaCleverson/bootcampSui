@@ -2,9 +2,9 @@
 
 > **Choose your language / Escolha seu idioma / Elige tu idioma**
 > 
-> - 🇧🇷 [Português (Brasil)](README.pt.md)
-> - 🇺🇸 [English](README.en.md)
-> - 🇪🇸 [Español](README.es.md)
+> - 🇧🇷 [Português (Brasil)](docs/README.pt.md)
+> - 🇺🇸 [English](docs/README.en.md)
+> - 🇪🇸 [Español](docs/README.es.md)
 
 ---
 
@@ -36,9 +36,9 @@ This repository contains challenges and projects developed during the **Sui MOVE
 ## 🚀 Quick Start
 
 For detailed installation and usage instructions, please select your preferred language:
-- 🇧🇷 [Português (Brasil)](README.pt.md) - Complete guide with ADVPL comparisons
-- 🇺🇸 [English](README.en.md) - Full documentation
-- 🇪🇸 [Español](README.es.md) - Documentación completa
+- 🇧🇷 [Português (Brasil)](docs/README.pt.md) - Complete guide with ADVPL comparisons
+- 🇺🇸 [English](docs/README.en.md) - Full documentation
+- 🇪🇸 [Español](docs/README.es.md) - Documentación completa
 
 ### Quick Test
 
@@ -52,11 +52,12 @@ sui move test
 ```
 bootcampSui/
 ├── Move.toml              # Move package configuration
-├── README.md              # This file (main)
-├── README.pt.md           # Portuguese version
-├── README.en.md           # English version
-├── README.es.md           # Spanish version
+├── README.md              # This file (main index)
 ├── .gitignore             # Git ignored files
+├── docs/                  # Documentation files
+│   ├── README.pt.md       # Portuguese version
+│   ├── README.en.md       # English version
+│   └── README.es.md        # Spanish version
 ├── instalador/            # Automatic installation scripts
 │   ├── Instalar_Sui.bat   # Main installer (Windows)
 │   ├── script_sui.ps1      # PowerShell installation script

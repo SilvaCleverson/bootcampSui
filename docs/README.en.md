@@ -115,10 +115,11 @@ This will run all tests from all challenges in the project.
 bootcampSui/
 ├── Move.toml              # Move package configuration
 ├── README.md              # Main README (multi-language index)
-├── README.pt.md           # Portuguese version
-├── README.en.md           # English version (this file)
-├── README.es.md           # Spanish version
 ├── .gitignore             # Git ignored files
+├── docs/                  # Documentation
+│   ├── README.pt.md       # Portuguese version
+│   ├── README.en.md       # English version (this file)
+│   └── README.es.md        # Spanish version
 ├── instalador/            # Automatic installation scripts
 │   ├── Instalar_Sui.bat   # Main installer (Windows)
 │   ├── script_sui.ps1      # PowerShell installation script

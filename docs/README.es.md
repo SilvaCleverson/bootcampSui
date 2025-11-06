@@ -115,10 +115,11 @@ Esto ejecutará todas las pruebas de todos los desafíos en el proyecto.
 bootcampSui/
 ├── Move.toml              # Configuración del paquete Move
 ├── README.md              # Archivo principal (índice multi-idioma)
-├── README.pt.md           # Versión en portugués
-├── README.en.md           # Versión en inglés
-├── README.es.md           # Versión en español (este archivo)
 ├── .gitignore             # Archivos ignorados por Git
+├── docs/                  # Documentación
+│   ├── README.pt.md       # Versión en portugués
+│   ├── README.en.md       # Versión en inglés
+│   └── README.es.md        # Versión en español (este archivo)
 ├── instalador/            # Scripts de instalación automática
 │   ├── Instalar_Sui.bat   # Instalador principal (Windows)
 │   ├── script_sui.ps1      # Script PowerShell de instalación

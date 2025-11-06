@@ -1,3 +1,21 @@
+# Build artifacts
 build/
-Move.lock
+
+# Move lock file (pode ser versionado, mas geralmente ignoramos)
+# Move.lock
+
+# Logs
+*.log
+instalador/instalacao_sui.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 

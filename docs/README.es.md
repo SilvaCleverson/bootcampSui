@@ -29,20 +29,44 @@ Este repositorio contiene los desafíos y proyectos desarrollados durante el **S
 
 ### 🔧 Instalación Automática (Windows)
 
+**Repositorio:** [GitHub - SilvaCleverson/bootcampSui](https://github.com/SilvaCleverson/bootcampSui)
+
 Este proyecto incluye un instalador de un clic para Windows que instala automáticamente:
-- **Sui CLI**
-- **Git**
-- **Visual Studio Code**
+
+**Lo que se instalará:**
+
+1. **Chocolatey** (Gestor de Paquetes para Windows)
+   - Necesario para instalar otros paquetes
+
+2. **Sui CLI** (Última versión)
+   - Herramienta de línea de comandos para desarrollo en blockchain Sui
+
+3. **Git** (Última versión)
+   - Sistema de control de versiones
+
+4. **Visual Studio Code** (Última versión)
+   - Editor de código
+
+5. **Extensiones de VS Code/Cursor** (instaladas automáticamente):
+   - Prettier Move (mysten.prettier-move)
+   - Sui Move (mysten.move)
+   - Move Syntax (damirka.move-syntax)
+
+6. **Proyecto Sui First Steps**
+   - Descargado y extraído de GitHub
+   - Instalado en: `C:\bootcampSui`
+   - Si `C:\bootcampSui` ya existe, crea: `C:\bootcampSui_YYYYMMDD`
+   - Abre automáticamente VS Code en la carpeta del proyecto
 
 #### Paso a Paso:
 
-1. **Navega hasta la carpeta `instalador`:**
+1. **Navega hasta la carpeta `sui-one-click-installer`:**
    ```bash
-   cd bootcampSui\instalador
+   cd bootcampSui\sui-one-click-installer
    ```
 
 2. **Ejecuta el instalador:**
-   - Haz clic derecho en `Instalar_Sui.bat`
+   - Haz clic derecho en `Install Sui (run as administrator).bat`
    - Selecciona **"Ejecutar como administrador"**
    - O simplemente haz doble clic (el script solicitará permisos automáticamente)
 
@@ -75,7 +99,7 @@ Este proyecto incluye un instalador de un clic para Windows que instala automát
 #### ⚠️ Solución de Problemas
 
 - Si algún comando no es reconocido después de la instalación, **cierra y abre una nueva terminal**
-- Si la instalación falla, consulta el archivo `instalacao_sui.log` en la carpeta `instalador`
+- Si la instalación falla, consulta el archivo `instalacao_sui.log` en la carpeta `sui-one-click-installer`
 - Asegúrate de ejecutar como administrador
 
 ### 📦 Instalación Manual
@@ -120,8 +144,8 @@ bootcampSui/
 │   ├── README.pt.md       # Versión en portugués
 │   ├── README.en.md       # Versión en inglés
 │   └── README.es.md        # Versión en español (este archivo)
-├── instalador/            # Scripts de instalación automática
-│   ├── Instalar_Sui.bat   # Instalador principal (Windows)
+├── sui-one-click-installer/  # Scripts de instalación automática
+│   ├── Install Sui (run as administrator).bat  # Instalador principal (Windows)
 │   ├── script_sui.ps1      # Script PowerShell de instalación
 │   └── README.txt          # Instrucciones del instalador
 └── sources/

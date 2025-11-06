@@ -1,65 +1,65 @@
 # script_sui.ps1
-# Instalador de 1 clique: Sui CLI + Git + VS Code via Chocolatey
-# Gera log: instalacao_sui.log na mesma pasta.
+# One-click installer: Sui CLI + Git + VS Code via Chocolatey
+# Generates log: installation_sui.log in the same folder.
 
 param([switch]$Quiet)
 
 Set-Location -Path (Split-Path -Parent $MyInvocation.MyCommand.Path)
 
-$LogPath = Join-Path (Get-Location) "instalacao_sui.log"
+$LogPath = Join-Path (Get-Location) "installation_sui.log"
 try { Stop-Transcript | Out-Null } catch {}
 Start-Transcript -Path $LogPath -Append | Out-Null
 
-Write-Host "=== Instalador Sui (Windows) ==="
+Write-Host "=== Sui Installer (Windows) ==="
 
-# Verificar Admin
+# Check Admin
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-  Write-Host "ERRO: este instalador precisa ser executado como Administrador." -ForegroundColor Red
+  Write-Host "ERROR: this installer must be run as Administrator." -ForegroundColor Red
   try { Stop-Transcript | Out-Null } catch {}
   exit 1
 }
 
-# ExecutionPolicy temporário
+# Temporary ExecutionPolicy
 try { Set-ExecutionPolicy Bypass -Scope Process -Force | Out-Null } catch {}
 
 # Chocolatey
 if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-  Write-Host "Instalando Chocolatey..."
+  Write-Host "Installing Chocolatey..."
   $chocoScript = 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString("https://community.chocolatey.org/install.ps1"))'
   powershell -NoProfile -ExecutionPolicy Bypass -Command $chocoScript
   if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-    Write-Host "Falha ao instalar Chocolatey." -ForegroundColor Red
+    Write-Host "Failed to install Chocolatey." -ForegroundColor Red
     try { Stop-Transcript | Out-Null } catch {}
     exit 1
   }
   if (Get-Command refreshenv -ErrorAction SilentlyContinue) { refreshenv | Out-Null }
 } else {
-  Write-Host "Chocolatey já instalado."
+  Write-Host "Chocolatey already installed."
 }
 
 function Install-Pkg {
   param([string]$Name, [string]$Title)
   if (-not $Title) { $Title = $Name }
-  Write-Host "Instalando $Title ..."
+  Write-Host "Installing $Title ..."
   choco install $Name -y --no-progress
   if ($LASTEXITCODE -ne 0) {
-    Write-Host "Tentando novamente: $Title"
+    Write-Host "Retrying: $Title"
     choco install $Name -y --no-progress
     if ($LASTEXITCODE -ne 0) {
-      Write-Host "Falha ao instalar $Title." -ForegroundColor Red
+      Write-Host "Failed to install $Title." -ForegroundColor Red
       try { Stop-Transcript | Out-Null } catch {}
       exit 1
     }
   }
 }
 
-# Pacotes
+# Packages
 Install-Pkg -Name "sui"    -Title "Sui CLI"
 Install-Pkg -Name "git"    -Title "Git"
 Install-Pkg -Name "vscode" -Title "Visual Studio Code"
 
-# Validar PATH atualizado
+# Validate updated PATH
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 $suiVersion  = (sui --version) 2>$null
@@ -67,27 +67,27 @@ $gitVersion  = (git --version) 2>$null
 $codeVersion = (code --version | Select-Object -First 1) 2>$null
 
 Write-Host ""
-if ($suiVersion) { Write-Host "Sui: $suiVersion" } else { Write-Host "Sui não detectado no PATH (abra um novo terminal e rode 'sui --version')." }
-if ($gitVersion) { Write-Host "$gitVersion" } else { Write-Host "Git não detectado no PATH (abra um novo terminal e rode 'git --version')." }
-if ($codeVersion) { Write-Host "VS Code: $codeVersion" } else { Write-Host "VS Code não detectado no PATH (abra um novo terminal e rode 'code --version')." }
+if ($suiVersion) { Write-Host "Sui: $suiVersion" } else { Write-Host "Sui not detected in PATH (open a new terminal and run 'sui --version')." }
+if ($gitVersion) { Write-Host "$gitVersion" } else { Write-Host "Git not detected in PATH (open a new terminal and run 'git --version')." }
+if ($codeVersion) { Write-Host "VS Code: $codeVersion" } else { Write-Host "VS Code not detected in PATH (open a new terminal and run 'code --version')." }
 
-# Instalar extensões do VS Code/Cursor
+# Install VS Code/Cursor extensions
 Write-Host ""
-Write-Host "Instalando extensões do VS Code/Cursor para Move..."
+Write-Host "Installing VS Code/Cursor extensions for Move..."
 Write-Host ""
 
 function Install-Extension {
   param([string]$ExtensionId, [string]$ExtensionName)
-  Write-Host "Instalando extensão: $ExtensionName ..."
+  Write-Host "Installing extension: $ExtensionName ..."
   code --install-extension $ExtensionId --force 2>&1 | Out-Null
   if ($LASTEXITCODE -eq 0) {
-    Write-Host "  ✓ $ExtensionName instalada com sucesso" -ForegroundColor Green
+    Write-Host "  [OK] $ExtensionName installed successfully" -ForegroundColor Green
   } else {
-    Write-Host "  ⚠ Falha ao instalar $ExtensionName (pode já estar instalada)" -ForegroundColor Yellow
+    Write-Host "  [WARN] Failed to install $ExtensionName (may already be installed)" -ForegroundColor Yellow
   }
 }
 
-# Aguardar um pouco para garantir que o VS Code está disponível
+# Wait a bit to ensure VS Code is available
 Start-Sleep -Seconds 2
 
 Install-Extension -ExtensionId "mysten.prettier-move" -ExtensionName "Prettier Move"
@@ -95,98 +95,109 @@ Install-Extension -ExtensionId "mysten.move" -ExtensionName "Sui Move"
 Install-Extension -ExtensionId "damirka.move-syntax" -ExtensionName "Move Syntax"
 
 Write-Host ""
-Write-Host "Proximos passos:"
-Write-Host "  - Abra um PowerShell novo e rode: sui client"
-Write-Host "  - Selecione a rede (testnet/devnet/mainnet)"
-Write-Host "  - Crie endereço: sui client new-address ed25519"
-Write-Host "  - Faucet (se aplicável): sui client faucet"
+Write-Host "Next steps:"
+Write-Host "  - Open a new PowerShell and run: sui client"
+Write-Host "  - Select network (testnet/devnet/mainnet)"
+Write-Host "  - Create address: sui client new-address ed25519"
+Write-Host "  - Faucet (if applicable): sui client faucet"
 Write-Host ""
 
-# Baixar e descompactar o projeto bootcampSui
+# Download and extract sui-first-steps project
 Write-Host ""
-Write-Host "Baixando projeto Sui First Steps..." -ForegroundColor Cyan
+Write-Host "Downloading Sui First Steps project..." -ForegroundColor Cyan
 
 $ProjetoUrl = "https://github.com/AguaPotavel/sui-first-steps/archive/refs/heads/main.zip"
-# Pasta bootcampSui será criada no diretório pai do instalador
-# Se o script está em bootcampSui/instalador/, então .Parent é bootcampSui/
-$PastaBootcamp = (Get-Location).Parent
+# Install project in C:\bootcampSui (or C:\bootcampSui_YYYYMMDD if exists)
+$PastaBase = "C:\bootcampSui"
 $ArquivoZip = Join-Path $env:TEMP "sui-first-steps-main.zip"
 
-# Criar pasta bootcampSui se não existir
-if (-not (Test-Path $PastaBootcamp)) {
-    Write-Host "Criando pasta bootcampSui: $PastaBootcamp"
-    New-Item -ItemType Directory -Path $PastaBootcamp -Force | Out-Null
+# Check if C:\bootcampSui exists, if so, create folder with date
+if (Test-Path $PastaBase) {
+    $DataAtual = Get-Date -Format "yyyyMMdd"
+    $PastaBootcamp = "$PastaBase`_$DataAtual"
+    Write-Host "C:\bootcampSui already exists. Creating folder with date: $PastaBootcamp"
 } else {
-    Write-Host "Usando pasta bootcampSui existente: $PastaBootcamp"
+    $PastaBootcamp = $PastaBase
+    Write-Host "Creating bootcampSui folder: $PastaBootcamp"
 }
 
-# Baixar o arquivo ZIP
-Write-Host "Baixando arquivo do GitHub..."
+# Create folder if it doesn't exist
+if (-not (Test-Path $PastaBootcamp)) {
+    New-Item -ItemType Directory -Path $PastaBootcamp -Force | Out-Null
+    Write-Host "Folder created: $PastaBootcamp" -ForegroundColor Green
+} else {
+    Write-Host "Using existing folder: $PastaBootcamp"
+}
+
+# Download ZIP file
+Write-Host "Downloading file from GitHub..."
 try {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest -Uri $ProjetoUrl -OutFile $ArquivoZip -UseBasicParsing
-    Write-Host "  ✓ Download concluído" -ForegroundColor Green
+    Write-Host "  [OK] Download completed" -ForegroundColor Green
 } catch {
-    Write-Host "  ✗ Erro ao baixar o arquivo: $_" -ForegroundColor Red
-    Write-Host "  Tentando novamente..." -ForegroundColor Yellow
+    Write-Host "  [ERROR] Error downloading file: $_" -ForegroundColor Red
+    Write-Host "  Retrying..." -ForegroundColor Yellow
     Start-Sleep -Seconds 2
     try {
         Invoke-WebRequest -Uri $ProjetoUrl -OutFile $ArquivoZip -UseBasicParsing
-        Write-Host "  ✓ Download concluído na segunda tentativa" -ForegroundColor Green
+        Write-Host "  [OK] Download completed on second attempt" -ForegroundColor Green
     } catch {
-        Write-Host "  ✗ Falha ao baixar após tentativas" -ForegroundColor Red
+        Write-Host "  [ERROR] Failed to download after attempts" -ForegroundColor Red
         $ArquivoZip = $null
     }
 }
 
-# Descompactar o arquivo
-if ($ArquivoZip -and (Test-Path $ArquivoZip)) {
-    Write-Host "Descompactando arquivo..."
+# Extract file
+if ($ArquivoZip -and (Test-Path $ArquivoZip) -and $PastaBootcamp) {
+    Write-Host "Extracting file..."
     try {
-        # Limpar pasta se já existir conteúdo do projeto
+        # Clean folder if project content already exists
         $PastaExtraida = Join-Path $PastaBootcamp "sui-first-steps-main"
         if (Test-Path $PastaExtraida) {
-            Write-Host "  Removendo conteúdo anterior..."
+            Write-Host "  Removing previous content..."
             Remove-Item -Path $PastaExtraida -Recurse -Force -ErrorAction SilentlyContinue
         }
         
-        # Descompactar
+        # Extract to C:\bootcampSui
         Expand-Archive -Path $ArquivoZip -DestinationPath $PastaBootcamp -Force
-        Write-Host "  ✓ Arquivo descompactado com sucesso" -ForegroundColor Green
+        Write-Host "  [OK] File extracted successfully" -ForegroundColor Green
         
-        # Renomear pasta extraída se necessário (o ZIP extrai como sui-first-steps-main)
+        # Move extracted content directly into bootcampSui
         $PastaExtraida = Join-Path $PastaBootcamp "sui-first-steps-main"
         if (Test-Path $PastaExtraida) {
-            # Mover conteúdo para dentro de bootcampSui diretamente
+            # Move all content directly into bootcampSui folder
             Get-ChildItem -Path $PastaExtraida | Move-Item -Destination $PastaBootcamp -Force
             Remove-Item -Path $PastaExtraida -Force -ErrorAction SilentlyContinue
-            Write-Host "  ✓ Estrutura de pastas organizada" -ForegroundColor Green
+            Write-Host "  [OK] Project installed in: $PastaBootcamp" -ForegroundColor Green
         }
         
-        # Limpar arquivo ZIP temporário
+        # Clean temporary ZIP file
         Remove-Item -Path $ArquivoZip -Force -ErrorAction SilentlyContinue
         
     } catch {
-        Write-Host "  ✗ Erro ao descompactar: $_" -ForegroundColor Red
+        Write-Host "  [ERROR] Error extracting: $_" -ForegroundColor Red
     }
 } else {
-    Write-Host "  ⚠ Não foi possível baixar o projeto. Você pode baixar manualmente de:" -ForegroundColor Yellow
+    Write-Host "  [WARN] Could not download project. You can download manually from:" -ForegroundColor Yellow
     Write-Host "  $ProjetoUrl" -ForegroundColor Yellow
 }
 
 Write-Host ""
-Write-Host "Log salvo em: $LogPath"
+Write-Host "Log saved at: $LogPath"
 
 try { Stop-Transcript | Out-Null } catch {}
 
-# Abrir VS Code/Cursor na pasta bootcampSui
+# Open VS Code/Cursor in bootcampSui folder
 Write-Host ""
-Write-Host "Abrindo VS Code/Cursor na pasta bootcampSui..." -ForegroundColor Cyan
+Write-Host "Opening VS Code/Cursor in bootcampSui folder..." -ForegroundColor Cyan
 Start-Sleep -Seconds 1
-if (Test-Path $PastaBootcamp) {
+if ($PastaBootcamp -and (Test-Path $PastaBootcamp)) {
     code $PastaBootcamp 2>&1 | Out-Null
 } else {
     code . 2>&1 | Out-Null
 }
 
-if (-not $Quiet) { Read-Host "Instalacao concluida. Pressione ENTER para sair." }
+if (-not $Quiet) {
+    Read-Host 'Installation completed. Press ENTER to exit.'
+}

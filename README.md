@@ -35,10 +35,25 @@ This repository contains challenges and projects developed during the **Sui MOVE
 
 ## 🚀 Quick Start
 
+**Repository:** [GitHub - SilvaCleverson/bootcampSui](https://github.com/SilvaCleverson/bootcampSui)
+
 For detailed installation and usage instructions, please select your preferred language:
 - 🇧🇷 [Português (Brasil)](docs/README.pt.md) - Complete guide with ADVPL comparisons
 - 🇺🇸 [English](docs/README.en.md) - Full documentation
 - 🇪🇸 [Español](docs/README.es.md) - Documentación completa
+
+### 🛠️ One-Click Installer (Windows)
+
+This repository includes a one-click installer for Windows that automatically installs:
+- **Chocolatey** (Package Manager)
+- **Sui CLI** (Latest version)
+- **Git** (Version control)
+- **Visual Studio Code** (Code editor)
+- **VS Code Extensions** (Prettier Move, Sui Move, Move Syntax)
+- **Sui First Steps Project** (Downloaded and extracted to `C:\bootcampSui`)
+
+**Location:** `sui-one-click-installer/` folder  
+**Instructions:** See `sui-one-click-installer/README.txt`
 
 ### Quick Test
 
@@ -58,8 +73,8 @@ bootcampSui/
 │   ├── README.pt.md       # Portuguese version
 │   ├── README.en.md       # English version
 │   └── README.es.md        # Spanish version
-├── instalador/            # Automatic installation scripts
-│   ├── Instalar_Sui.bat   # Main installer (Windows)
+├── sui-one-click-installer/  # Automatic installation scripts
+│   ├── Install Sui (run as administrator).bat  # Main installer (Windows)
 │   ├── script_sui.ps1      # PowerShell installation script
 │   └── README.txt          # Installer instructions
 └── sources/

@@ -149,16 +149,18 @@ bootcampSui/
 │   ├── script_sui.ps1      # Script PowerShell de instalación
 │   └── README.txt          # Instrucciones del instalador
 └── sources/
-    ├── desafio_logo.move      # Desafío 01: Logo ASCII
-    ├── desafio_contador.move  # Desafío 02: Contador
-    └── ...                    # Más desafíos se agregarán aquí
+    └── desafios/                  # Carpeta de desafíos
+        ├── desafio_logo.move          # Desafío 01: Logo ASCII
+        ├── desafio_contador.move      # Desafío 02: Contador
+        ├── desafio_lista_tarefas.move # Desafío 03: Lista de Tareas
+        └── ...                        # Más desafíos se agregarán aquí
 ```
 
 ## 📚 Desafíos
 
 ### Desafío 01: Logo ASCII 🎨
 
-**Archivo:** `sources/desafio_logo.move`
+**Archivo:** `sources/desafios/desafio_logo.move`
 
 **Objetivo:** Imprimir el logo ASCII de Sui usando funciones auxiliares y bucles.
 
@@ -181,7 +183,7 @@ El comando imprime el logo ASCII completo de Sui en la consola.
 
 ### Desafío 02: Contador 🔢
 
-**Archivo:** `sources/desafio_contador.move`
+**Archivo:** `sources/desafios/desafio_contador.move`
 
 **Objetivo:** Implementar varias funciones de contador usando bucles y lógica condicional.
 
@@ -204,6 +206,62 @@ sui move test desafio_contador
 
 **Resultado Esperado:**
 El comando ejecuta todas las funciones de contador y muestra los resultados de la cuenta en la consola.
+
+---
+
+### Desafío 03: Lista de Tareas 📝
+
+**Archivo:** `sources/desafios/desafio_lista_tarefas.move`
+
+**Objetivo:** Implementar un contrato inteligente de Lista de Tareas con operaciones CRUD (Create, Read, Update, Delete).
+
+**Conceptos Demostrados:**
+- Structs con habilidades `key` y `store`
+- Creación y transferencia de objetos
+- Referencias mutables (`&mut`)
+- Operaciones con vectores
+- Funciones entry para interacción con blockchain
+- Manejo de errores con `abort`
+
+**Funciones:**
+- `new()` - Crea una nueva lista de tareas vacía
+- `adicionar_tarefa()` - Añade una tarea a la lista
+- `remover_tarefa()` - Elimina una tarea por índice
+- `alterar_tarefa()` - Modifica una tarea por índice
+- `quantidade_tarefas()` - Retorna el número de tareas
+- `obter_tarefa()` - Obtiene una tarea por índice
+- `listar_tarefas()` - Lista todas las tareas (para depuración)
+- `limpar_tarefas()` - Limpia todas las tareas
+
+**Cómo probar:**
+```bash
+cd bootcampSui
+sui move test desafio_lista_tarefas
+```
+
+**Cómo publicar:**
+```bash
+cd bootcampSui
+sui client publish
+```
+
+**Cómo usar (después de publicar):**
+```bash
+# Crear una nueva lista de tareas
+sui client call --package <PACKAGE_ID> --module desafio_lista_tarefas --function new --gas-budget 100000000
+
+# Añadir una tarea
+sui client call --package <PACKAGE_ID> --module desafio_lista_tarefas --function adicionar_tarefa --args <LIST_OBJECT_ID> "Mi tarea" --gas-budget 100000000
+
+# Modificar una tarea (índice 0)
+sui client call --package <PACKAGE_ID> --module desafio_lista_tarefas --function alterar_tarefa --args <LIST_OBJECT_ID> 0 "Tarea modificada" --gas-budget 100000000
+
+# Eliminar una tarea (índice 0)
+sui client call --package <PACKAGE_ID> --module desafio_lista_tarefas --function remover_tarefa --args <LIST_OBJECT_ID> 0 --gas-budget 100000000
+```
+
+**Resultado Esperado:**
+Las pruebas demuestran todas las operaciones CRUD en una lista de tareas almacenada en la blockchain Sui.
 
 ---
 

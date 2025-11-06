@@ -149,16 +149,18 @@ bootcampSui/
 │   ├── script_sui.ps1      # PowerShell installation script
 │   └── README.txt          # Installer instructions
 └── sources/
-    ├── desafio_logo.move      # Challenge 01: ASCII Logo
-    ├── desafio_contador.move  # Challenge 02: Counter
-    └── ...                    # More challenges will be added here
+    └── desafios/                  # Challenges folder
+        ├── desafio_logo.move          # Challenge 01: ASCII Logo
+        ├── desafio_contador.move      # Challenge 02: Counter
+        ├── desafio_lista_tarefas.move # Challenge 03: Todo List
+        └── ...                        # More challenges will be added here
 ```
 
 ## 📚 Challenges
 
 ### Challenge 01: ASCII Logo 🎨
 
-**File:** `sources/desafio_logo.move`
+**File:** `sources/desafios/desafio_logo.move`
 
 **Objective:** Print the Sui ASCII logo using helper functions and loops.
 
@@ -181,7 +183,7 @@ The command prints the complete Sui ASCII logo in the console.
 
 ### Challenge 02: Counter 🔢
 
-**File:** `sources/desafio_contador.move`
+**File:** `sources/desafios/desafio_contador.move`
 
 **Objective:** Implement various counter functions using loops and conditional logic.
 
@@ -204,6 +206,62 @@ sui move test desafio_contador
 
 **Expected Result:**
 The command executes all counter functions and displays the counting results in the console.
+
+---
+
+### Challenge 03: Todo List 📝
+
+**File:** `sources/desafios/desafio_lista_tarefas.move`
+
+**Objective:** Implement a Todo List smart contract with CRUD operations (Create, Read, Update, Delete).
+
+**Concepts Demonstrated:**
+- Structs with `key` and `store` abilities
+- Object creation and transfer
+- Mutable references (`&mut`)
+- Vector operations
+- Entry functions for blockchain interaction
+- Error handling with `abort`
+
+**Functions:**
+- `new()` - Create a new empty todo list
+- `adicionar_tarefa()` - Add a task to the list
+- `remover_tarefa()` - Remove a task by index
+- `alterar_tarefa()` - Update a task by index
+- `quantidade_tarefas()` - Get the number of tasks
+- `obter_tarefa()` - Get a task by index
+- `listar_tarefas()` - List all tasks (for debugging)
+- `limpar_tarefas()` - Clear all tasks
+
+**How to test:**
+```bash
+cd bootcampSui
+sui move test desafio_lista_tarefas
+```
+
+**How to publish:**
+```bash
+cd bootcampSui
+sui client publish
+```
+
+**How to use (after publishing):**
+```bash
+# Create a new todo list
+sui client call --package <PACKAGE_ID> --module desafio_lista_tarefas --function new --gas-budget 100000000
+
+# Add a task
+sui client call --package <PACKAGE_ID> --module desafio_lista_tarefas --function adicionar_tarefa --args <LIST_OBJECT_ID> "My task" --gas-budget 100000000
+
+# Update a task (index 0)
+sui client call --package <PACKAGE_ID> --module desafio_lista_tarefas --function alterar_tarefa --args <LIST_OBJECT_ID> 0 "Updated task" --gas-budget 100000000
+
+# Remove a task (index 0)
+sui client call --package <PACKAGE_ID> --module desafio_lista_tarefas --function remover_tarefa --args <LIST_OBJECT_ID> 0 --gas-budget 100000000
+```
+
+**Expected Result:**
+The tests demonstrate all CRUD operations on a todo list stored on the Sui blockchain.
 
 ---
 
@@ -301,5 +359,5 @@ This project is part of the Sui Move Bootcamp and is used for educational purpos
 
 **Developed with ❤️ by Cleverson Silva**
 
-*Sui Move Bootcamp - 2025*
+*Sui Move Bootcamp - Nov 2025*
 

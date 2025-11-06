@@ -124,8 +124,9 @@ bootcampSui/
 │   ├── script_sui.ps1      # Script PowerShell de instalación
 │   └── README.txt          # Instrucciones del instalador
 └── sources/
-    ├── desafio_logo.move  # Desafío 01: Logo ASCII
-    └── ...                # Más desafíos se agregarán aquí
+    ├── desafio_logo.move      # Desafío 01: Logo ASCII
+    ├── desafio_contador.move  # Desafío 02: Contador
+    └── ...                    # Más desafíos se agregarán aquí
 ```
 
 ## 📚 Desafíos
@@ -150,6 +151,34 @@ sui move test desafio_logo
 
 **Resultado Esperado:**
 El comando imprime el logo ASCII completo de Sui en la consola.
+
+---
+
+### Desafío 02: Contador 🔢
+
+**Archivo:** `sources/desafio_contador.move`
+
+**Objetivo:** Implementar varias funciones de contador usando bucles y lógica condicional.
+
+**Conceptos Demostrados:**
+- Bucles (`while`)
+- Reasignación de variables
+- Parámetros de funciones
+- Múltiples implementaciones de contador:
+  - Contar de 1 hasta N
+  - Contar de inicio hasta fin
+  - Cuenta regresiva
+  - Contar con intervalo personalizado
+  - Contar con mensaje personalizado
+
+**Cómo ejecutar:**
+```bash
+cd bootcampSui
+sui move test desafio_contador
+```
+
+**Resultado Esperado:**
+El comando ejecuta todas las funciones de contador y muestra los resultados de la cuenta en la consola.
 
 ---
 

@@ -124,8 +124,9 @@ bootcampSui/
 │   ├── script_sui.ps1      # PowerShell installation script
 │   └── README.txt          # Installer instructions
 └── sources/
-    ├── desafio_logo.move  # Challenge 01: ASCII Logo
-    └── ...                # More challenges will be added here
+    ├── desafio_logo.move      # Challenge 01: ASCII Logo
+    ├── desafio_contador.move  # Challenge 02: Counter
+    └── ...                    # More challenges will be added here
 ```
 
 ## 📚 Challenges
@@ -150,6 +151,34 @@ sui move test desafio_logo
 
 **Expected Result:**
 The command prints the complete Sui ASCII logo in the console.
+
+---
+
+### Challenge 02: Counter 🔢
+
+**File:** `sources/desafio_contador.move`
+
+**Objective:** Implement various counter functions using loops and conditional logic.
+
+**Concepts Demonstrated:**
+- Loops (`while`)
+- Variable reassignment
+- Function parameters
+- Multiple counter implementations:
+  - Count from 1 to N
+  - Count from start to end
+  - Countdown (regressive)
+  - Count with custom interval
+  - Count with custom message
+
+**How to run:**
+```bash
+cd bootcampSui
+sui move test desafio_contador
+```
+
+**Expected Result:**
+The command executes all counter functions and displays the counting results in the console.
 
 ---
 

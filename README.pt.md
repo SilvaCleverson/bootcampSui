@@ -122,7 +122,7 @@ bootcampSui/
 │   └── README.txt         # Instruções do instalador
 └── sources/
     ├── desafio_logo.move      # Desafio 01: Logo ASCII
-    ├── exemplo_funcoes.move   # Exemplo: Tipos de Funções
+    ├── desafio_contador.move  # Desafio 02: Contador
     └── ...                    # Outros desafios serão adicionados aqui
 ```
 
@@ -151,31 +151,31 @@ O comando imprime o logo ASCII completo da Sui no console.
 
 ---
 
-### 📚 Exemplo: Tipos de Funções
+### Desafio 02: Contador 🔢
 
-**Arquivo:** `sources/exemplo_funcoes.move`
+**Arquivo:** `sources/desafio_contador.move`
 
-**Objetivo:** Demonstrar os diferentes tipos de funções em Move e quando usar cada uma.
+**Objetivo:** Implementar várias funções de contador usando laços e lógica condicional.
 
 **Conceitos Demonstrados:**
-- `fun` - Funções privadas/auxiliares
-- `public fun` - Funções públicas (outros módulos podem chamar)
-- `public entry fun` - Funções de entrada (vão para blockchain)
-- `#[test] fun` - Funções de teste (apenas desenvolvimento)
-
-**Comparação com ADVPL:**
-- `fun` = `Static Function` (auxiliar)
-- `public entry fun` = `User Function` (principal)
-- `#[test] fun` = Função de teste
+- Laços (`while`)
+- Reatribuição de variáveis
+- Parâmetros de funções
+- Múltiplas implementações de contador:
+  - Contar de 1 até N
+  - Contar de início até fim
+  - Contagem regressiva
+  - Contar com intervalo personalizado
+  - Contar com mensagem personalizada
 
 **Como executar:**
 ```bash
 cd bootcampSui
-sui move test exemplo_funcoes
+sui move test desafio_contador
 ```
 
 **Resultado Esperado:**
-O comando executa todos os testes e mostra os resultados de processamento de pagamento.
+O comando executa todas as funções de contador e exibe os resultados da contagem no console.
 
 ---
 

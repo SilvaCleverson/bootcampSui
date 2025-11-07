@@ -29,18 +29,37 @@ if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
   Write-Host "Installing Chocolatey..."
   $chocoScript = 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString(''https://community.chocolatey.org/install.ps1''))'
   powershell -NoProfile -ExecutionPolicy Bypass -Command $chocoScript
-  if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-    Write-Host "Failed to install Chocolatey." -ForegroundColor Red
-    try { Stop-Transcript | Out-Null } catch {}
-    exit 1
+  
+  # Update PATH to include Chocolatey bin directory
+  $chocoPath = "C:\ProgramData\chocolatey\bin"
+  if (Test-Path $chocoPath) {
+    $env:Path = "$env:Path;$chocoPath"
+    [System.Environment]::SetEnvironmentVariable("Path", [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";$chocoPath", "Process")
   }
-  if (Get-Command refreshenv -ErrorAction SilentlyContinue) { refreshenv | Out-Null }
+  
+  # Wait a moment and check again
+  Start-Sleep -Seconds 2
+  
+  if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+    # Try to refresh environment
+    if (Test-Path "$env:ProgramData\chocolatey\bin\refreshenv.cmd") {
+      & "$env:ProgramData\chocolatey\bin\refreshenv.cmd" | Out-Null
+    }
+    Start-Sleep -Seconds 1
+    
+    if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+      Write-Host "Failed to install Chocolatey. Please restart PowerShell and run the installer again." -ForegroundColor Red
+      try { Stop-Transcript | Out-Null } catch {}
+      exit 1
+    }
+  }
+  Write-Host "Chocolatey installed successfully." -ForegroundColor Green
 } else {
   Write-Host "Chocolatey already installed."
 }
 
 function Install-Pkg {
-  param([string]$Name, [string]$Title)
+  param([string]$Name, [string]$Title, [switch]$Optional)
   if (-not $Title) { $Title = $Name }
   Write-Host "Installing $Title ..."
   choco install $Name -y --no-progress
@@ -48,29 +67,112 @@ function Install-Pkg {
     Write-Host "Retrying: $Title"
     choco install $Name -y --no-progress
     if ($LASTEXITCODE -ne 0) {
-      Write-Host "Failed to install $Title." -ForegroundColor Red
-      try { Stop-Transcript | Out-Null } catch {}
-      exit 1
+      if ($Optional) {
+        Write-Host "  [WARN] $Title not available in Chocolatey repository. Skipping..." -ForegroundColor Yellow
+        return $false
+      } else {
+        Write-Host "Failed to install $Title." -ForegroundColor Red
+        try { Stop-Transcript | Out-Null } catch {}
+        exit 1
+      }
     }
   }
+  return $true
 }
 
 # Packages
 Install-Pkg -Name "sui"    -Title "Sui CLI"
+Install-Pkg -Name "suiup"  -Title "Suiup" -Optional
+Install-Pkg -Name "mvr"    -Title "MVR" -Optional
 Install-Pkg -Name "git"    -Title "Git"
 Install-Pkg -Name "vscode" -Title "Visual Studio Code"
 
 # Validate updated PATH
+Write-Host ""
+Write-Host "Validating installation..." -ForegroundColor Cyan
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-$suiVersion  = (sui --version) 2>$null
-$gitVersion  = (git --version) 2>$null
-$codeVersion = (code --version | Select-Object -First 1) 2>$null
+# Wait a moment for PATH to be fully updated
+Start-Sleep -Seconds 2
+
+# Test installations - Show results in console
+Write-Host ""
+Write-Host "Testing installed tools..." -ForegroundColor Cyan
+Write-Host ""
+
+Write-Host "1. Testing Sui CLI:" -ForegroundColor Yellow
+try {
+    $suiVersion = sui --version 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "   [OK] $suiVersion" -ForegroundColor Green
+    } else {
+        Write-Host "   [WARN] Sui not detected in PATH" -ForegroundColor Yellow
+        Write-Host "          Please open a new terminal and run: sui --version" -ForegroundColor Yellow
+    }
+} catch {
+    Write-Host "   [WARN] Sui not detected in PATH" -ForegroundColor Yellow
+    Write-Host "          Please open a new terminal and run: sui --version" -ForegroundColor Yellow
+}
 
 Write-Host ""
-if ($suiVersion) { Write-Host "Sui: $suiVersion" } else { Write-Host "Sui not detected in PATH (open a new terminal and run 'sui --version')." }
-if ($gitVersion) { Write-Host "$gitVersion" } else { Write-Host "Git not detected in PATH (open a new terminal and run 'git --version')." }
-if ($codeVersion) { Write-Host "VS Code: $codeVersion" } else { Write-Host "VS Code not detected in PATH (open a new terminal and run 'code --version')." }
+Write-Host "2. Testing Git:" -ForegroundColor Yellow
+try {
+    $gitVersion = git --version 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "   [OK] $gitVersion" -ForegroundColor Green
+    } else {
+        Write-Host "   [WARN] Git not detected in PATH" -ForegroundColor Yellow
+        Write-Host "          Please open a new terminal and run: git --version" -ForegroundColor Yellow
+    }
+} catch {
+    Write-Host "   [WARN] Git not detected in PATH" -ForegroundColor Yellow
+    Write-Host "          Please open a new terminal and run: git --version" -ForegroundColor Yellow
+}
+
+Write-Host ""
+Write-Host "3. Testing Suiup:" -ForegroundColor Yellow
+try {
+    $suiupVersion = suiup --version 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "   [OK] $suiupVersion" -ForegroundColor Green
+    } else {
+        Write-Host "   [INFO] Suiup not installed (optional package)" -ForegroundColor Cyan
+        Write-Host "          Install manually if needed" -ForegroundColor Cyan
+    }
+} catch {
+    Write-Host "   [INFO] Suiup not installed (optional package)" -ForegroundColor Cyan
+    Write-Host "          Install manually if needed" -ForegroundColor Cyan
+}
+
+Write-Host ""
+Write-Host "4. Testing MVR:" -ForegroundColor Yellow
+try {
+    $mvrVersion = mvr --version 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "   [OK] $mvrVersion" -ForegroundColor Green
+    } else {
+        Write-Host "   [INFO] MVR not installed (optional package)" -ForegroundColor Cyan
+        Write-Host "          Install manually if needed" -ForegroundColor Cyan
+    }
+} catch {
+    Write-Host "   [INFO] MVR not installed (optional package)" -ForegroundColor Cyan
+    Write-Host "          Install manually if needed" -ForegroundColor Cyan
+}
+
+Write-Host ""
+Write-Host "5. Testing VS Code:" -ForegroundColor Yellow
+try {
+    $codeVersion = code --version 2>&1 | Select-Object -First 1
+    if ($LASTEXITCODE -eq 0 -and $codeVersion) {
+        Write-Host "   [OK] VS Code: $codeVersion" -ForegroundColor Green
+    } else {
+        Write-Host "   [WARN] VS Code not detected in PATH" -ForegroundColor Yellow
+        Write-Host "          Please open a new terminal and run: code --version" -ForegroundColor Yellow
+    }
+} catch {
+    Write-Host "   [WARN] VS Code not detected in PATH" -ForegroundColor Yellow
+    Write-Host "          Please open a new terminal and run: code --version" -ForegroundColor Yellow
+}
 
 # Install VS Code/Cursor extensions
 Write-Host ""

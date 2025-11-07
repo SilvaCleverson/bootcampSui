@@ -76,8 +76,8 @@ Navega hasta la carpeta `sui-one-click-installer/` en este repositorio.
 
 ### 📂 **Ubicación de la Instalación**
 
-- **Proyecto:** `C:\bootcampSui` (o `C:\bootcampSui_YYYYMMDD` si la carpeta ya existe)
-- **Archivo de log:** `installation_sui.log` (en la carpeta del instalador)
+- **Proyecto:** `C:\bootcampSui` (o `C:\bootcampSui_YYYYMMDD_HHMMSS_FFF` si la carpeta ya existe)
+- **Archivo de log:** `installation_sui.log` (en la misma carpeta del script instalador)
 
 ### ⚠️ **Notas Importantes**
 

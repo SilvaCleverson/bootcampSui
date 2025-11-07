@@ -86,8 +86,8 @@ Navigate to the `sui-one-click-installer/` folder in this repository.
 
 ### 📂 **Installation Location**
 
-- **Project:** `C:\bootcampSui` (or `C:\bootcampSui_YYYYMMDD` if folder exists)
-- **Log file:** `installation_sui.log` (in installer folder)
+- **Project:** `C:\bootcampSui` (or `C:\bootcampSui_YYYYMMDD_HHMMSS_FFF` if folder exists)
+- **Log file:** `installation_sui.log` (in the same folder as the installer script)
 
 ### ⚠️ **Important Notes**
 

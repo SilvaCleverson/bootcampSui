@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
-import { useCurrentAccount, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
+import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
 import { Transaction } from "@mysten/sui/transactions";
 import { PACKAGE_ID, MODULE_NAME, FUNCTION_REGISTER_EVENT } from "@/lib/constants";
 
@@ -13,12 +13,14 @@ interface Event {
   materials?: string[];
   location?: string;
   cmCut?: number;
+  txDigest?: string; // Digest da transação para buscar timestamp depois se necessário
 }
 
 export function EventRegister() {
   const { t, language } = useI18n();
   const account = useCurrentAccount();
   const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  const suiClient = useSuiClient();
   const [events, setEvents] = useState<Event[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [isSavingEvent, setIsSavingEvent] = useState(false);
@@ -96,21 +98,87 @@ export function EventRegister() {
           transaction: tx,
         },
         {
-          onSuccess: (result) => {
+          onSuccess: async (result) => {
             console.log("✅ Evento registrado on-chain com sucesso:", result);
+            
+            // Buscar detalhes da transação para obter o timestamp da blockchain
+            // Aguardar um pouco para garantir que a transação esteja confirmada
+            let blockchainTimestamp: string | null = null;
+            
+            // Tentar buscar o timestamp com retry (até 3 tentativas)
+            for (let attempt = 0; attempt < 3; attempt++) {
+              try {
+                // Aguardar um pouco antes de buscar (especialmente na primeira tentativa)
+                if (attempt > 0) {
+                  await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+                }
+                
+                const txDetails = await suiClient.getTransactionBlock({
+                  digest: result.digest,
+                  options: {
+                    showEffects: true,
+                    showEvents: true,
+                    showInput: false,
+                    showObjectChanges: true,
+                  },
+                });
+                
+                console.log("📋 Detalhes da transação:", txDetails);
+                
+                // O timestamp pode estar em diferentes lugares na resposta
+                if (txDetails.timestampMs) {
+                  blockchainTimestamp = new Date(Number(txDetails.timestampMs)).toISOString();
+                  console.log("📅 Timestamp encontrado (timestampMs):", blockchainTimestamp);
+                  break;
+                } else if ((txDetails as any).transaction?.data?.timestampMs) {
+                  blockchainTimestamp = new Date(Number((txDetails as any).transaction.data.timestampMs)).toISOString();
+                  console.log("📅 Timestamp encontrado (transaction.data.timestampMs):", blockchainTimestamp);
+                  break;
+                } else {
+                  console.warn(`⚠️ Tentativa ${attempt + 1}: Timestamp não encontrado na estrutura esperada`);
+                }
+              } catch (error) {
+                console.error(`❌ Erro na tentativa ${attempt + 1} ao buscar timestamp:`, error);
+                if (attempt === 2) {
+                  // Última tentativa falhou, usar data/hora atual como fallback
+                  console.warn("⚠️ Usando timestamp atual como fallback");
+                  blockchainTimestamp = new Date().toISOString();
+                }
+              }
+            }
+            
+            // Se ainda não conseguiu, usar data/hora atual
+            if (!blockchainTimestamp) {
+              blockchainTimestamp = new Date().toISOString();
+              console.warn("⚠️ Usando timestamp atual como fallback final");
+            }
             
             // Resetar estado de salvamento
             setIsSavingEvent(false);
             
-            // Criar evento local
+            // Usar timestamp da blockchain se disponível, senão usar data selecionada + hora atual
+            let eventDate: string;
+            if (blockchainTimestamp) {
+              eventDate = blockchainTimestamp;
+            } else {
+              // Fallback: combinar data selecionada com hora atual
+              const selectedDate = new Date(formData.date);
+              const now = new Date();
+              selectedDate.setHours(now.getHours());
+              selectedDate.setMinutes(now.getMinutes());
+              selectedDate.setSeconds(now.getSeconds());
+              eventDate = selectedDate.toISOString();
+            }
+            
             const newEvent: Event = {
               id: Date.now().toString(),
               type: formData.type,
-              date: formData.date,
+              date: eventDate,
               description: formData.description || undefined,
               location: formData.location || undefined,
               cmCut: formData.cmCut ? Number(formData.cmCut) : undefined,
               materials: formData.materials ? formData.materials.split(",").map(m => m.trim()) : undefined,
+              txDigest: result.digest, // Salvar digest para referência futura
             };
 
             const newEvents = [...events, newEvent].sort((a, b) => 
@@ -133,10 +201,10 @@ export function EventRegister() {
             
             // Mostrar feedback
             alert(language === "pt-BR"
-              ? `✅ Evento registrado on-chain com sucesso!\n\n📝 Transaction: ${result.digest}\n\n💎 Evento salvo na blockchain Sui!`
+              ? `✅ Evento registrado on-chain com sucesso!\n\n📝 Transaction: ${result.digest}\n\n💎 Evento salvo na blockchain Sui!\n\n🕐 Data/Hora: ${new Date(eventDate).toLocaleString(language === "pt-BR" ? "pt-BR" : language === "en-US" ? "en-US" : "es-ES")}`
               : language === "en-US"
-              ? `✅ Event registered on-chain successfully!\n\n📝 Transaction: ${result.digest}\n\n💎 Event saved on Sui blockchain!`
-              : `✅ Evento registrado on-chain con éxito!\n\n📝 Transacción: ${result.digest}\n\n💎 Evento guardado en la blockchain Sui!`);
+              ? `✅ Event registered on-chain successfully!\n\n📝 Transaction: ${result.digest}\n\n💎 Event saved on Sui blockchain!\n\n🕐 Date/Time: ${new Date(eventDate).toLocaleString("en-US")}`
+              : `✅ Evento registrado on-chain con éxito!\n\n📝 Transacción: ${result.digest}\n\n💎 Evento guardado en la blockchain Sui!\n\n🕐 Fecha/Hora: ${new Date(eventDate).toLocaleString("es-ES")}`);
           },
           onError: (error) => {
             console.error("❌ Erro ao registrar evento on-chain:", error);

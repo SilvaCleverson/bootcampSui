@@ -5,11 +5,12 @@ import SuiWatermark from "@/components/SuiWatermark";
 export const metadata = {
   title: "CronoCapilar — Onchain Proof of Self‑Care",
   description: "CronoCapilar turns your haircare routine into onchain proof of self-care.",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

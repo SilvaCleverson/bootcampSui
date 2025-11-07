@@ -49,6 +49,7 @@ function Dashboard() {
       setHairLength("");
       setHairTexture("");
       setOnChainSaved(false);
+      setProfileLoaded(true); // Marcar como carregado mesmo sem conta
       return;
     }
 
@@ -498,70 +499,85 @@ function Dashboard() {
       <>
         {/* Header */}
         <header style={{ 
-        background: "linear-gradient(135deg, #ffffff 0%, #fdf4f7 100%)",
-        borderRadius: 24,
-        padding: 20,
-        marginBottom: 24,
-        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.06)",
-        border: "1px solid rgba(255, 107, 157, 0.1)"
-      }}>
-        {/* Logo + Nome */}
-        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
-          <div style={{
-            width: 56,
-            height: 56,
-            borderRadius: 16,
-            background: "linear-gradient(135deg, #667eea 0%, #ff6b9d 100%)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 8px 24px rgba(102, 126, 234, 0.3)"
-          }}>
-            <img 
-              src="/logo.png" 
-              alt="CronoCapilar Logo"
-              style={{ width: 40, height: 40, objectFit: "contain" }}
-            />
-          </div>
-          <div>
-            <div style={{ fontSize: 24, fontWeight: 700, color: "#2d3748", marginBottom: 4 }}>
-              {t.app.title}
+          background: "linear-gradient(135deg, #ffffff 0%, #fdf4f7 100%)",
+          borderRadius: 24,
+          padding: "24px 32px",
+          marginBottom: 24,
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.06)",
+          border: "1px solid rgba(255, 107, 157, 0.1)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+            {/* Logo + Nome */}
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{
+                width: 64,
+                height: 64,
+                borderRadius: 18,
+                background: "linear-gradient(135deg, #667eea 0%, #ff6b9d 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 8px 24px rgba(102, 126, 234, 0.3)",
+                flexShrink: 0
+              }}>
+                <img 
+                  src="/logo.png" 
+                  alt="CronoCapilar Logo"
+                  style={{ width: 44, height: 44, objectFit: "contain" }}
+                />
+              </div>
+              <div>
+                <div style={{ 
+                  fontSize: 28, 
+                  fontWeight: 800, 
+                  background: "linear-gradient(135deg, #667eea 0%, #ff6b9d 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  marginBottom: 4,
+                  letterSpacing: "-0.5px"
+                }}>
+                  {t.app.title}
+                </div>
+                <div style={{ fontSize: 13, color: "#667eea", fontWeight: 500, display: "flex", alignItems: "center", gap: 6 }}>
+                  <span>💜</span>
+                  <span>{t.app.subtitle}</span>
+                </div>
+              </div>
             </div>
-            <div style={{ fontSize: 13, color: "#667eea", fontWeight: 500 }}>
-              💜 {t.app.subtitle}
+            
+            {/* Link do Website */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <a
+                href="https://cronogramacapilar.com.br"
+                target="_blank"
+                rel="noreferrer"
+                style={{ 
+                  color: "#667eea", 
+                  textDecoration: "none", 
+                  fontSize: 13,
+                  fontWeight: 500,
+                  padding: "8px 16px",
+                  background: "rgba(102, 126, 234, 0.08)",
+                  borderRadius: 12,
+                  transition: "all 0.3s",
+                  border: "1px solid rgba(102, 126, 234, 0.15)"
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = "rgba(102, 126, 234, 0.15)";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(102, 126, 234, 0.2)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = "rgba(102, 126, 234, 0.08)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                {t.app.website}
+              </a>
             </div>
           </div>
-        </div>
-        
-        {/* Link */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-          <a
-            href="https://cronogramacapilar.com.br"
-            target="_blank"
-            rel="noreferrer"
-            style={{ 
-              color: "#667eea", 
-              textDecoration: "none", 
-              fontSize: 13,
-              fontWeight: 500,
-              padding: "6px 12px",
-              background: "rgba(102, 126, 234, 0.08)",
-              borderRadius: 12,
-              transition: "all 0.3s"
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = "rgba(102, 126, 234, 0.15)";
-              e.currentTarget.style.transform = "scale(1.05)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = "rgba(102, 126, 234, 0.08)";
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-          >
-            {t.app.website}
-          </a>
-        </div>
-      </header>
+        </header>
 
       {/* Mensagem de conexão obrigatória */}
       <WalletRequiredMessage />
@@ -578,140 +594,169 @@ function Dashboard() {
       <header style={{ 
         background: "linear-gradient(135deg, #ffffff 0%, #fdf4f7 100%)",
         borderRadius: 24,
-        padding: 20,
+        padding: "24px 32px",
         marginBottom: 24,
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.06)",
         border: "1px solid rgba(255, 107, 157, 0.1)"
       }}>
-        {/* Logo + Nome */}
-        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
-          <div style={{
-            width: 56,
-            height: 56,
-            borderRadius: 16,
-            background: "linear-gradient(135deg, #667eea 0%, #ff6b9d 100%)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 8px 24px rgba(102, 126, 234, 0.3)"
-          }}>
-            <img 
-              src="/logo.png" 
-              alt="CronoCapilar Logo"
-              style={{ width: 40, height: 40, objectFit: "contain" }}
-            />
-          </div>
-          <div>
-            <div style={{ fontSize: 24, fontWeight: 700, color: "#2d3748", marginBottom: 4 }}>
-              {t.app.title}
-            </div>
-            <div style={{ fontSize: 13, color: "#667eea", fontWeight: 500 }}>
-              💜 {t.app.subtitle}
-            </div>
-          </div>
-        </div>
-        
-        {/* Link e Login */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-          <a
-            href="https://cronogramacapilar.com.br"
-            target="_blank"
-            rel="noreferrer"
-            style={{ 
-              color: "#667eea", 
-              textDecoration: "none", 
-              fontSize: 13,
-              fontWeight: 500,
-              padding: "6px 12px",
-              background: "rgba(102, 126, 234, 0.08)",
-              borderRadius: 12,
-              transition: "all 0.3s"
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = "rgba(102, 126, 234, 0.15)";
-              e.currentTarget.style.transform = "scale(1.05)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = "rgba(102, 126, 234, 0.08)";
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-          >
-            {t.app.website}
-          </a>
-          {account ? (
-            <div style={{ 
-              display: "flex", 
-              alignItems: "center", 
-              gap: 8,
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
+          {/* Logo + Nome */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, flex: 1, minWidth: 280 }}>
+            <div style={{
+              width: 64,
+              height: 64,
+              borderRadius: 18,
               background: "linear-gradient(135deg, #667eea 0%, #ff6b9d 100%)",
-              padding: "10px 16px",
-              borderRadius: 16,
-              color: "white",
-              fontSize: 14,
-              fontWeight: 600
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 8px 24px rgba(102, 126, 234, 0.3)",
+              flexShrink: 0
             }}>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                <img 
-                  src="/LogoSui.jpg" 
-                  alt="Sui Logo" 
-                  style={{ width: 16, height: 16, objectFit: "contain" }}
-                />
-                {formatAddress(account.address)}
-              </span>
-              <button
-                onClick={() => disconnect()}
-                style={{
-                  padding: "6px 12px",
-                  borderRadius: 8,
-                  border: "1px solid rgba(255,255,255,0.3)",
-                  background: "rgba(255,255,255,0.2)",
-                  color: "white",
-                  cursor: "pointer",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  transition: "all 0.2s",
-                  marginLeft: 4
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255,255,255,0.3)";
-                  e.currentTarget.style.border = "1px solid rgba(255,255,255,0.5)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(255,255,255,0.2)";
-                  e.currentTarget.style.border = "1px solid rgba(255,255,255,0.3)";
-                }}
-                title={language === "pt-BR" ? "Desconectar carteira" : language === "en-US" ? "Disconnect wallet" : "Desconectar carteira"}
-              >
-                {language === "pt-BR" ? "Sair" : language === "en-US" ? "Disconnect" : "Salir"}
-              </button>
+              <img 
+                src="/logo.png" 
+                alt="CronoCapilar Logo"
+                style={{ width: 44, height: 44, objectFit: "contain" }}
+              />
             </div>
-          ) : (
-            <button
-              onClick={() => setIsLoginModalOpen(true)}
-              style={{
-                padding: "12px 24px",
-                borderRadius: 16,
-                border: "2px solid rgba(102, 126, 234, 0.3)",
+            <div>
+              <div style={{ 
+                fontSize: 28, 
+                fontWeight: 800, 
                 background: "linear-gradient(135deg, #667eea 0%, #ff6b9d 100%)",
-                color: "white",
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: "pointer",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                marginBottom: 4,
+                letterSpacing: "-0.5px"
+              }}>
+                {t.app.title}
+              </div>
+              <div style={{ fontSize: 13, color: "#667eea", fontWeight: 500, display: "flex", alignItems: "center", gap: 6 }}>
+                <span>💜</span>
+                <span>{t.app.subtitle}</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Link do Website e Wallet Info */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            <a
+              href="https://cronogramacapilar.com.br"
+              target="_blank"
+              rel="noreferrer"
+              style={{ 
+                color: "#667eea", 
+                textDecoration: "none", 
+                fontSize: 13,
+                fontWeight: 500,
+                padding: "8px 16px",
+                background: "rgba(102, 126, 234, 0.08)",
+                borderRadius: 12,
                 transition: "all 0.3s",
-                boxShadow: "0 4px 16px rgba(102, 126, 234, 0.3)",
+                border: "1px solid rgba(102, 126, 234, 0.15)",
+                whiteSpace: "nowrap"
               }}
-              onMouseEnter={(e) => {
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "rgba(102, 126, 234, 0.15)";
                 e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = "0 8px 24px rgba(102, 126, 234, 0.4)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(102, 126, 234, 0.2)";
               }}
-              onMouseLeave={(e) => {
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "rgba(102, 126, 234, 0.08)";
                 e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 4px 16px rgba(102, 126, 234, 0.3)";
+                e.currentTarget.style.boxShadow = "none";
               }}
             >
-              💆‍♀️ Login
-            </button>
-          )}
+              {t.app.website}
+            </a>
+            
+            {account ? (
+              <div style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                gap: 10,
+                background: "linear-gradient(135deg, #667eea 0%, #ff6b9d 100%)",
+                padding: "10px 18px",
+                borderRadius: 16,
+                color: "white",
+                fontSize: 13,
+                fontWeight: 600,
+                boxShadow: "0 4px 16px rgba(102, 126, 234, 0.3)"
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <img 
+                    src="/LogoSui.jpg" 
+                    alt="Sui Logo" 
+                    style={{ width: 18, height: 18, objectFit: "contain", borderRadius: 4 }}
+                  />
+                  <span style={{ fontFamily: "monospace", letterSpacing: "0.5px" }}>
+                    {formatAddress(account.address)}
+                  </span>
+                </div>
+                <div style={{ 
+                  width: 1, 
+                  height: 20, 
+                  background: "rgba(255,255,255,0.3)",
+                  margin: "0 4px"
+                }} />
+                <button
+                  onClick={() => disconnect()}
+                  style={{
+                    padding: "6px 14px",
+                    borderRadius: 10,
+                    border: "1px solid rgba(255,255,255,0.3)",
+                    background: "rgba(255,255,255,0.15)",
+                    color: "white",
+                    cursor: "pointer",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    transition: "all 0.2s",
+                    whiteSpace: "nowrap"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(255,255,255,0.25)";
+                    e.currentTarget.style.border = "1px solid rgba(255,255,255,0.5)";
+                    e.currentTarget.style.transform = "scale(1.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+                    e.currentTarget.style.border = "1px solid rgba(255,255,255,0.3)";
+                    e.currentTarget.style.transform = "scale(1)";
+                  }}
+                  title={language === "pt-BR" ? "Desconectar carteira" : language === "en-US" ? "Disconnect wallet" : "Desconectar carteira"}
+                >
+                  {language === "pt-BR" ? "Sair" : language === "en-US" ? "Disconnect" : "Salir"}
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsLoginModalOpen(true)}
+                style={{
+                  padding: "12px 24px",
+                  borderRadius: 16,
+                  border: "2px solid rgba(102, 126, 234, 0.3)",
+                  background: "linear-gradient(135deg, #667eea 0%, #ff6b9d 100%)",
+                  color: "white",
+                  fontSize: 15,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                  boxShadow: "0 4px 16px rgba(102, 126, 234, 0.3)",
+                  whiteSpace: "nowrap"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(102, 126, 234, 0.4)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 4px 16px rgba(102, 126, 234, 0.3)";
+                }}
+              >
+                💆‍♀️ {language === "pt-BR" ? "Conectar" : language === "en-US" ? "Connect" : "Conectar"}
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -1099,7 +1144,7 @@ function Dashboard() {
       />
 
       {/* Footer */}
-      <footer style={{ marginTop: 32, fontSize: 12, color: "#666", textAlign: "center" }}>
+      <footer style={{ marginTop: 32, fontSize: 12, color: "#666", textAlign: "center", padding: "16px", lineHeight: "1.8" }}>
         {t.footer.builtFor} • <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
           <img 
             src="/LogoSui.jpg" 
@@ -1108,6 +1153,10 @@ function Dashboard() {
           />
           <strong style={{ color: "#667eea" }}>Sui</strong>
         </span> • 💜 {t.footer.madeWithLove}
+        <br />
+        <div style={{ marginTop: 8, fontSize: 11, fontFamily: "monospace", wordBreak: "break-all", opacity: 0.7 }}>
+          Package ID: <span style={{ color: "#667eea", fontWeight: 600 }}>{PACKAGE_ID}</span>
+        </div>
       </footer>
 
       {/* Modal de Login */}

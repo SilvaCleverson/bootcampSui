@@ -15,12 +15,27 @@ interface TimelineEvent {
 export function TimelinePage() {
   const { t, language } = useI18n();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
+  // Carregar preferência salva ou usar "recente" como padrão
+  const [sortOrder, setSortOrder] = useState<"recente" | "antigo">(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("timeline_sort_order");
+      return (saved === "antigo" ? "antigo" : "recente") as "recente" | "antigo";
+    }
+    return "recente";
+  });
+  
+  // Salvar preferência quando mudar
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("timeline_sort_order", sortOrder);
+    }
+  }, [sortOrder]);
 
   useEffect(() => {
     loadTimeline();
     const interval = setInterval(loadTimeline, 1000);
     return () => clearInterval(interval);
-  }, [language]);
+  }, [language, sortOrder]);
 
   function loadTimeline() {
     const allEvents: TimelineEvent[] = [];
@@ -103,15 +118,20 @@ export function TimelinePage() {
       });
     }
 
-    // Ordenar por data (mais recente primeiro) - incluindo milissegundos para eventos simultâneos
+    // Ordenar por data baseado no sortOrder
     allEvents.sort((a, b) => {
       const timeA = new Date(a.date).getTime();
       const timeB = new Date(b.date).getTime();
       // Se os tempos forem iguais, ordenar pelo ID para consistência
       if (timeA === timeB) {
-        return b.id.localeCompare(a.id);
+        return sortOrder === "recente" 
+          ? b.id.localeCompare(a.id)
+          : a.id.localeCompare(b.id);
       }
-      return timeB - timeA;
+      // Ordenar por data: recente = mais novo primeiro, antigo = mais antigo primeiro
+      return sortOrder === "recente" 
+        ? timeB - timeA  // Mais recente primeiro
+        : timeA - timeB; // Mais antigo primeiro
     });
     setEvents(allEvents);
   }
@@ -148,11 +168,15 @@ export function TimelinePage() {
     return `${dateFormatted}, ${hours}:${minutes}`;
   }
 
-  function getRelativeTime(dateStr: string) {
+  function getDaysAgo(dateStr: string): number {
     const now = new Date();
     const date = new Date(dateStr);
     const diffTime = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  function getRelativeTime(dateStr: string) {
+    const diffDays = getDaysAgo(dateStr);
     
     if (diffDays === 0) {
       return language === "pt-BR" ? "Hoje" : language === "en-US" ? "Today" : "Hoy";
@@ -214,14 +238,80 @@ export function TimelinePage() {
           </h3>
         </div>
         <div style={{ 
-          fontSize: 11, 
-          color: "#999", 
-          background: "linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%)", 
-          padding: "6px 16px", 
-          borderRadius: 12, 
-          display: "inline-block"
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "center", 
+          gap: 8 
         }}>
-          ⬆️ {language === "pt-BR" ? "RECENTE | ANTIGO" : language === "en-US" ? "RECENT | OLDEST" : "RECIENTE | ANTIGUO"} ⬇️
+          <button
+            onClick={() => setSortOrder("recente")}
+            style={{
+              fontSize: 11,
+              color: sortOrder === "recente" ? "#667eea" : "#999",
+              background: sortOrder === "recente" 
+                ? "linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)" 
+                : "linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%)",
+              padding: "6px 12px",
+              borderRadius: 12,
+              border: sortOrder === "recente" ? "2px solid #667eea" : "2px solid transparent",
+              cursor: "pointer",
+              fontWeight: sortOrder === "recente" ? 600 : 400,
+              transition: "all 0.3s",
+              display: "flex",
+              alignItems: "center",
+              gap: 4
+            }}
+            onMouseEnter={(e) => {
+              if (sortOrder !== "recente") {
+                e.currentTarget.style.background = "linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%)";
+                e.currentTarget.style.color = "#667eea";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (sortOrder !== "recente") {
+                e.currentTarget.style.background = "linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%)";
+                e.currentTarget.style.color = "#999";
+              }
+            }}
+          >
+            <span>⬆️</span>
+            <span>{language === "pt-BR" ? "RECENTE" : language === "en-US" ? "RECENT" : "RECIENTE"}</span>
+          </button>
+          <span style={{ color: "#ccc", fontSize: 12 }}>|</span>
+          <button
+            onClick={() => setSortOrder("antigo")}
+            style={{
+              fontSize: 11,
+              color: sortOrder === "antigo" ? "#667eea" : "#999",
+              background: sortOrder === "antigo" 
+                ? "linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)" 
+                : "linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%)",
+              padding: "6px 12px",
+              borderRadius: 12,
+              border: sortOrder === "antigo" ? "2px solid #667eea" : "2px solid transparent",
+              cursor: "pointer",
+              fontWeight: sortOrder === "antigo" ? 600 : 400,
+              transition: "all 0.3s",
+              display: "flex",
+              alignItems: "center",
+              gap: 4
+            }}
+            onMouseEnter={(e) => {
+              if (sortOrder !== "antigo") {
+                e.currentTarget.style.background = "linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%)";
+                e.currentTarget.style.color = "#667eea";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (sortOrder !== "antigo") {
+                e.currentTarget.style.background = "linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%)";
+                e.currentTarget.style.color = "#999";
+              }
+            }}
+          >
+            <span>{language === "pt-BR" ? "ANTIGO" : language === "en-US" ? "OLDEST" : "ANTIGUO"}</span>
+            <span>⬇️</span>
+          </button>
         </div>
       </div>
 
@@ -290,9 +380,46 @@ export function TimelinePage() {
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 8 }}>
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>
-                    {event.title}
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <div style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>
+                      {event.title}
+                    </div>
+                    {(() => {
+                      const daysAgo = getDaysAgo(event.date);
+                      if (daysAgo === 0) {
+                        return (
+                          <span style={{
+                            fontSize: 10,
+                            fontWeight: 600,
+                            color: "#10b981",
+                            background: "linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)",
+                            padding: "2px 8px",
+                            borderRadius: 8,
+                            border: "1px solid #10b98130"
+                          }}>
+                            {language === "pt-BR" ? "HOJE" : language === "en-US" ? "TODAY" : "HOY"}
+                          </span>
+                        );
+                      } else {
+                        return (
+                          <span style={{
+                            fontSize: 10,
+                            fontWeight: 600,
+                            color: event.color,
+                            background: `linear-gradient(135deg, ${event.color}15 0%, ${event.color}25 100%)`,
+                            padding: "2px 8px",
+                            borderRadius: 8,
+                            border: `1px solid ${event.color}30`
+                          }}>
+                            {daysAgo === 1 
+                              ? (language === "pt-BR" ? "1 DIA" : language === "en-US" ? "1 DAY" : "1 DÍA")
+                              : `${daysAgo} ${language === "pt-BR" ? "DIAS" : language === "en-US" ? "DAYS" : "DÍAS"}`
+                            }
+                          </span>
+                        );
+                      }
+                    })()}
                   </div>
                   {event.description && (
                     <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>

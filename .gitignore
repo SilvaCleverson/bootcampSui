@@ -19,3 +19,28 @@ Thumbs.db
 *.swo
 *~
 
+# Node modules e arquivos de build do Next.js
+node_modules/
+.next/
+out/
+dist/
+*.tsbuildinfo
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+
+# Logs do npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+

@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #fef5f5 0%, #faf8f3 50%, #f5f0f8 100%);
+  min-height: 100vh;
+  color: #2d3748;
+}
+
+/* Estilos globais para botões */
+button {
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Cores do tema */
+:root {
+  --primary-green: #3a5a40;
+  --primary-gold: #d4af37;
+  --primary-purple: #667eea;
+  --primary-pink: #ff6b9d;
+  --soft-green: #e8f5e9;
+  --soft-pink: #fce4ec;
+  --soft-purple: #f3e5f5;
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Container responsivo */
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Desktop - telas maiores */
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+    padding: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+    padding: 32px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+    padding: 40px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1400px;
+    padding: 48px;
+  }
+}

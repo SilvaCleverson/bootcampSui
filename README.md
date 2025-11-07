@@ -8,6 +8,45 @@
 
 ---
 
+## 🌟 **CronoCapilar - Projeto Principal**
+
+### ⚠️ **Status: Em Desenvolvimento**
+
+> **O CronoCapilar é o projeto principal e mais completo deste repositório, demonstrando uma aplicação Web3 completa integrada com a blockchain Sui.**
+
+### 📱 **Sobre o Projeto**
+
+**CronoCapilar** é uma aplicação Web3 que transforma a rotina de cuidados capilares em prova on-chain de autocuidado na blockchain Sui. O projeto integra:
+
+- **Frontend**: Next.js com TypeScript
+- **Blockchain**: Sui Move smart contracts
+- **Carteiras**: Integração com Sui Wallet e Phantom
+- **Internacionalização**: Suporte para Português, Inglês e Espanhol
+
+### 🎯 **Funcionalidades Principais**
+
+- ✅ Perfil de cuidados capilares on-chain
+- ✅ Registro de tratamentos capilares (Hidratação, Nutrição, Reconstrução)
+- ✅ Timeline de eventos capilares (Big Chop, Cortes, Colorações)
+- ✅ Sistema de check-in diário
+- ✅ Estatísticas e acompanhamento de progresso
+- ✅ Armazenamento descentralizado na blockchain Sui
+
+### 📂 **Localização do Projeto**
+
+O projeto está localizado em: `cronocapilar-sui-final/`
+
+### 🚧 **Aviso Importante**
+
+**Este projeto está em desenvolvimento ativo.** Funcionalidades podem estar incompletas ou sujeitas a mudanças. Use com cautela em produção.
+
+### 🔗 **Links Relacionados**
+
+- 📄 [Checklist de Implementação](cronocapilar-sui-final/CHECKLIST_SUI.md)
+- 📦 [Package.json](cronocapilar-sui-final/package.json)
+
+---
+
 ## 📋 About the Bootcamp
 
 This repository contains challenges and projects developed during the **Sui MOVE Bootcamp Brasil**. Each challenge demonstrates different concepts and functionalities of the Move language on the Sui platform.
@@ -130,12 +169,20 @@ bootcampSui/
 │   ├── README.pt.md       # Portuguese version
 │   ├── README.en.md       # English version
 │   └── README.es.md        # Spanish version
+├── cronocapilar-sui-final/  # 🌟 PROJETO PRINCIPAL - CronoCapilar (Em Desenvolvimento)
+│   ├── app/               # Next.js app directory
+│   ├── components/        # React components
+│   ├── lib/               # Utilities and providers
+│   ├── contracts/         # Smart contracts
+│   ├── public/            # Static assets
+│   └── CHECKLIST_SUI.md   # Checklist de implementação
 ├── sui-one-click-installer/  # Automatic installation scripts
 │   ├── Install Sui (run as administrator).bat  # Main installer (Windows)
 │   ├── script_sui.ps1      # PowerShell installation script
 │   └── README.txt          # Installer instructions
 └── sources/
     └── desafios/              # Challenges folder
+        ├── cronocapilar.move # Smart contract do CronoCapilar
         ├── desafio_logo.move          # Challenge 01: ASCII Logo
         ├── desafio_contador.move      # Challenge 02: Counter
         ├── desafio_lista_tarefas.move # Challenge 03: Todo List

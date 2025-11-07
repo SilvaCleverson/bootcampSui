@@ -1,0 +1,27 @@
+{
+  "name": "cronocapilar-miniapp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@mysten/dapp-kit": "^0.19.8",
+    "@mysten/sui": "^1.44.0",
+    "@tanstack/react-query": "^5.90.7",
+    "next": "^14.2.33",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.25",
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.22",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.5",
+    "typescript": "^5.4.5"
+  }
+}

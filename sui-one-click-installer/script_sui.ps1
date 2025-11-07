@@ -4,9 +4,10 @@
 
 param([switch]$Quiet)
 
-Set-Location -Path (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+Set-Location -Path $ScriptDir
 
-$LogPath = Join-Path (Get-Location) "installation_sui.log"
+$LogPath = Join-Path $ScriptDir "installation_sui.log"
 try { Stop-Transcript | Out-Null } catch {}
 Start-Transcript -Path $LogPath -Append | Out-Null
 
@@ -26,7 +27,7 @@ try { Set-ExecutionPolicy Bypass -Scope Process -Force | Out-Null } catch {}
 # Chocolatey
 if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
   Write-Host "Installing Chocolatey..."
-  $chocoScript = 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString("https://community.chocolatey.org/install.ps1"))'
+  $chocoScript = 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString(''https://community.chocolatey.org/install.ps1''))'
   powershell -NoProfile -ExecutionPolicy Bypass -Command $chocoScript
   if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
     Write-Host "Failed to install Chocolatey." -ForegroundColor Red

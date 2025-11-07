@@ -144,6 +144,95 @@ For complete step-by-step instructions, see:
 
 ---
 
+## 🔄 **Para Desenvolvedores ADVPL Migrando para Move**
+
+Se você é desenvolvedor **ADVPL/Protheus** e está começando com Move, este repositório foi criado especialmente para facilitar sua transição!
+
+### 📚 **Guia Completo de Comparação**
+
+O arquivo **[docs/README.pt.md](docs/README.pt.md)** contém uma seção completa com comparações detalhadas entre ADVPL e Move, incluindo:
+
+- ✅ **Tabela de comparação** ADVPL ↔ Move
+- ✅ **Explicação de conceitos** principais
+- ✅ **Exemplos práticos** de migração
+- ✅ **Dicas específicas** para desenvolvedores ADVPL
+
+### 🎯 **Principais Diferenças**
+
+| ADVPL | Move | Observação |
+|-------|------|------------|
+| **Funções** |||
+| `User Function` | `#[test] fun` | Função executável/testável |
+| `Static Function` | `fun` | Função auxiliar/helper |
+| `Public Function` | `public fun` | Função pública do módulo |
+| `Public Entry Function` | `public entry fun` | Função de entrada para transações |
+| **Estruturas de Controle** |||
+| `While ... EndDo` | `while { }` | Laço de repetição |
+| `If ... EndIf` | `if { }` | Condicional |
+| **Estruturas de Dados** |||
+| `aStruct := {cCampo1, cCampo2}` | `struct Nome { campo1: Tipo, campo2: Tipo }` | Definição de estrutura |
+| `aStruct.cCampo1` | `struct.campo1` | Acesso a campo |
+| `aStruct := {cCampo1 := "valor"}` | `Struct { campo1: valor }` | Criação de instância |
+| **Abilities (Capacidades)** |||
+| - | `has key` | Objeto pode ser identificado na blockchain |
+| - | `has store` | Objeto pode ser armazenado/transferido |
+| - | `has drop` | Objeto pode ser descartado |
+| - | `has copy` | Objeto pode ser copiado |
+| **Referências** |||
+| Passagem por valor | `&` (referência imutável) | Leitura sem modificar |
+| `@` (passagem por referência) | `&mut` (referência mutável) | Permite modificação |
+| **Tipos de Dados** |||
+| `cTexto := "Hello"` | `vector<u8>` + `utf8()` | String (vetor de bytes) |
+| `nNumero := 10` | `u64`, `u32`, `u8` | Números inteiros sem sinal |
+| `lLogico := .T.` | `bool` (true/false) | Booleano |
+| `aArray := {}` | `vector<Tipo>` | Array/Vetor |
+| **Outros** |||
+| `ConOut()` | `print()` | Saída no console |
+| `#Define CONST 0` | `const CONST: u64 = 0` | Constante |
+| `#Include` | `use` | Importar bibliotecas |
+| `Local` | `let` | Variável local |
+| - | `UID` | Identificador único de objeto |
+| - | `TxContext` | Contexto da transação |
+| - | `address` | Endereço na blockchain |
+
+### 📦 **Exemplo Prático: Structs**
+
+Em Move, structs são como estruturas em ADVPL, mas com capacidades especiais:
+
+```move
+// Move: Struct com abilities key e store (pode ser objeto na blockchain)
+struct Profile has key, store {
+    id: UID,
+    hair_type: vector<u8>,
+    owner: address,
+}
+
+// Criar instância
+let profile = Profile {
+    id: object::new(ctx),
+    hair_type: b"liso",
+    owner: sender,
+};
+```
+
+**Equivalente em ADVPL:**
+```advpl
+// ADVPL: Estrutura simples
+Local aProfile := {;
+    "id"      => "",
+    "cHairType" => "liso",
+    "cOwner"  => ""
+}
+```
+
+### 💡 **Dica Importante**
+
+Este bootcamp foi desenvolvido por um desenvolvedor que migrou de ADVPL para Move, então as explicações são pensadas especialmente para quem vem dessa base!
+
+**👉 Acesse o guia completo:** [docs/README.pt.md](docs/README.pt.md)
+
+---
+
 ### 🔧 **Manual Installation (Alternative)**
 
 If you prefer to install manually or are not on Windows, see the detailed guides:

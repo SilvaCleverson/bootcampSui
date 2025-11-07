@@ -27,40 +27,21 @@ Este repositório contém os desafios e projetos desenvolvidos durante o **Sui M
 
 ## 🚀 Como Executar
 
-### 🔧 Instalação Automática (Windows)
+---
 
-**Repositório:** [GitHub - SilvaCleverson/bootcampSui](https://github.com/SilvaCleverson/bootcampSui)
+## ⚡ **INSTALADOR DE 1 CLIQUE (RECOMENDADO PARA WINDOWS)**
 
-Este projeto inclui um instalador de 1 clique para Windows que instala automaticamente:
+### 🎯 **A Forma Mais Fácil de Começar**
 
-**O que será instalado:**
+Este repositório inclui um **instalador de 1 clique** que configura automaticamente todo o seu ambiente de desenvolvimento em minutos!
 
-1. **Chocolatey** (Gerenciador de Pacotes para Windows)
-   - Necessário para instalar os outros pacotes
+### 📍 **Onde Encontrar**
 
-2. **Sui CLI** (Última versão)
-   - Ferramenta de linha de comando para desenvolvimento na blockchain Sui
+Navegue até a pasta `sui-one-click-installer/` neste repositório.
 
-3. **Git** (Última versão)
-   - Sistema de controle de versão
+### 🚀 **Como Usar**
 
-4. **Visual Studio Code** (Última versão)
-   - Editor de código
-
-5. **Extensões do VS Code/Cursor** (instaladas automaticamente):
-   - Prettier Move (mysten.prettier-move)
-   - Sui Move (mysten.move)
-   - Move Syntax (damirka.move-syntax)
-
-6. **Projeto Sui First Steps**
-   - Baixado e extraído do GitHub
-   - Instalado em: `C:\bootcampSui`
-   - Se `C:\bootcampSui` já existir, cria: `C:\bootcampSui_YYYYMMDD`
-   - Abre automaticamente o VS Code na pasta do projeto
-
-#### Passo a Passo:
-
-1. **Navegue até a pasta `sui-one-click-installer`:**
+1. **Abra a pasta do instalador:**
    ```bash
    cd bootcampSui\sui-one-click-installer
    ```
@@ -70,39 +51,49 @@ Este projeto inclui um instalador de 1 clique para Windows que instala automatic
    - Selecione **"Executar como administrador"**
    - Ou simplesmente dê duplo clique (o script solicitará permissões automaticamente)
 
-3. **Aguarde a instalação:**
-   - O instalador usará o Chocolatey para instalar os programas
-   - Todo o processo será registrado no arquivo `instalacao_sui.log`
+3. **Aguarde a instalação** (5-10 minutos dependendo da sua velocidade de internet)
 
 4. **Verifique a instalação:**
-   - Abra um **novo PowerShell** (importante: feche e abra novamente)
-   - Execute os comandos para verificar:
+   - Abra um **PowerShell NOVO** (importante: feche e abra novamente)
+   - Execute:
      ```bash
      sui --version
      git --version
      code --version
      ```
 
-5. **Próximos passos após instalação:**
-   ```bash
-   # Configurar o cliente Sui
-   sui client
-   
-   # Selecionar a rede (testnet/devnet/mainnet)
-   # Criar novo endereço
-   sui client new-address ed25519
-   
-   # Obter tokens de teste (se necessário)
-   sui client faucet
-   ```
+### 📦 **O Que Será Instalado Automaticamente**
 
-#### ⚠️ Solução de Problemas
+✅ **Chocolatey** - Gerenciador de pacotes para Windows  
+✅ **Sui CLI** - Última versão (ferramenta de linha de comando para blockchain Sui)  
+✅ **Git** - Sistema de controle de versão  
+✅ **Visual Studio Code** - Editor de código  
+✅ **Extensões do VS Code:**
+   - Prettier Move (formatação de código)
+   - Sui Move (destaque de sintaxe e IntelliSense)
+   - Move Syntax (suporte adicional de sintaxe)  
+✅ **Projeto Sui First Steps** - Baixado e extraído para `C:\bootcampSui`
 
-- Se algum comando não for reconhecido após a instalação, **feche e abra um novo terminal**
-- Se a instalação falhar, consulte o arquivo `instalacao_sui.log` na pasta `sui-one-click-installer`
-- Certifique-se de executar como administrador
+### 📂 **Localização da Instalação**
 
-### 📦 Instalação Manual
+- **Projeto:** `C:\bootcampSui` (ou `C:\bootcampSui_YYYYMMDD` se a pasta já existir)
+- **Arquivo de log:** `installation_sui.log` (na pasta do instalador)
+
+### ⚠️ **Observações Importantes**
+
+- **Execute como administrador** - Necessário para instalar software
+- **Feche e abra o terminal** - Após a instalação, abra um novo PowerShell para usar os comandos
+- **Verifique o arquivo de log** - Se algo falhar, consulte `installation_sui.log` para detalhes
+
+### 📖 **Instruções Detalhadas**
+
+Para instruções completas passo a passo, consulte:
+- 📄 `sui-one-click-installer/README.txt` (Inglês)
+- 📄 Este arquivo (README.pt.md) - Guia completo com comparações ADVPL
+
+---
+
+### 🔧 **Instalação Manual (Alternativa)**
 
 Se preferir instalar manualmente ou estiver em outro sistema operacional:
 

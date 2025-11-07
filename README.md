@@ -37,23 +37,80 @@ This repository contains challenges and projects developed during the **Sui MOVE
 
 **Repository:** [GitHub - SilvaCleverson/bootcampSui](https://github.com/SilvaCleverson/bootcampSui)
 
-For detailed installation and usage instructions, please select your preferred language:
+---
+
+## ⚡ **ONE-CLICK INSTALLER (RECOMMENDED FOR WINDOWS)**
+
+### 🎯 **Easiest Way to Get Started**
+
+This repository includes a **one-click installer** that automatically sets up your entire development environment in minutes!
+
+### 📍 **Where to Find It**
+
+Navigate to the `sui-one-click-installer/` folder in this repository.
+
+### 🚀 **How to Use**
+
+1. **Open the installer folder:**
+   ```bash
+   cd bootcampSui\sui-one-click-installer
+   ```
+
+2. **Run the installer:**
+   - Right-click on `Install Sui (run as administrator).bat`
+   - Select **"Run as administrator"**
+   - Or simply double-click (the script will request permissions automatically)
+
+3. **Wait for installation** (5-10 minutes depending on your internet speed)
+
+4. **Verify installation:**
+   - Open a **NEW PowerShell window** (important: close and reopen)
+   - Run:
+     ```bash
+     sui --version
+     git --version
+     code --version
+     ```
+
+### 📦 **What Gets Installed Automatically**
+
+✅ **Chocolatey** - Package manager for Windows  
+✅ **Sui CLI** - Latest version (command-line tool for Sui blockchain)  
+✅ **Git** - Version control system  
+✅ **Visual Studio Code** - Code editor  
+✅ **VS Code Extensions:**
+   - Prettier Move (code formatting)
+   - Sui Move (syntax highlighting and IntelliSense)
+   - Move Syntax (additional syntax support)  
+✅ **Sui First Steps Project** - Downloaded and extracted to `C:\bootcampSui`
+
+### 📂 **Installation Location**
+
+- **Project:** `C:\bootcampSui` (or `C:\bootcampSui_YYYYMMDD` if folder exists)
+- **Log file:** `installation_sui.log` (in installer folder)
+
+### ⚠️ **Important Notes**
+
+- **Run as administrator** - Required for installing software
+- **Close and reopen terminal** - After installation, open a new PowerShell to use commands
+- **Check log file** - If something fails, check `installation_sui.log` for details
+
+### 📖 **Detailed Instructions**
+
+For complete step-by-step instructions, see:
+- 📄 `sui-one-click-installer/README.txt` (English)
 - 🇧🇷 [Português (Brasil)](docs/README.pt.md) - Complete guide with ADVPL comparisons
 - 🇺🇸 [English](docs/README.en.md) - Full documentation
 - 🇪🇸 [Español](docs/README.es.md) - Documentación completa
 
-### 🛠️ One-Click Installer (Windows)
+---
 
-This repository includes a one-click installer for Windows that automatically installs:
-- **Chocolatey** (Package Manager)
-- **Sui CLI** (Latest version)
-- **Git** (Version control)
-- **Visual Studio Code** (Code editor)
-- **VS Code Extensions** (Prettier Move, Sui Move, Move Syntax)
-- **Sui First Steps Project** (Downloaded and extracted to `C:\bootcampSui`)
+### 🔧 **Manual Installation (Alternative)**
 
-**Location:** `sui-one-click-installer/` folder  
-**Instructions:** See `sui-one-click-installer/README.txt`
+If you prefer to install manually or are not on Windows, see the detailed guides:
+- 🇧🇷 [Português (Brasil)](docs/README.pt.md)
+- 🇺🇸 [English](docs/README.en.md)
+- 🇪🇸 [Español](docs/README.es.md)
 
 ### Quick Test
 

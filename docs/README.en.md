@@ -27,40 +27,21 @@ This repository contains challenges and projects developed during the **Sui MOVE
 
 ## 🚀 How to Run
 
-### 🔧 Automatic Installation (Windows)
+---
 
-**Repository:** [GitHub - SilvaCleverson/bootcampSui](https://github.com/SilvaCleverson/bootcampSui)
+## ⚡ **ONE-CLICK INSTALLER (RECOMMENDED FOR WINDOWS)**
 
-This project includes a one-click installer for Windows that automatically installs:
+### 🎯 **Easiest Way to Get Started**
 
-**What will be installed:**
+This repository includes a **one-click installer** that automatically sets up your entire development environment in minutes!
 
-1. **Chocolatey** (Package Manager for Windows)
-   - Required for installing other packages
+### 📍 **Where to Find It**
 
-2. **Sui CLI** (Latest version)
-   - Command-line tool for Sui blockchain development
+Navigate to the `sui-one-click-installer/` folder in this repository.
 
-3. **Git** (Latest version)
-   - Version control system
+### 🚀 **How to Use**
 
-4. **Visual Studio Code** (Latest version)
-   - Code editor
-
-5. **VS Code/Cursor Extensions** (automatically installed):
-   - Prettier Move (mysten.prettier-move)
-   - Sui Move (mysten.move)
-   - Move Syntax (damirka.move-syntax)
-
-6. **Sui First Steps Project**
-   - Downloaded and extracted from GitHub
-   - Installed in: `C:\bootcampSui`
-   - If `C:\bootcampSui` already exists, creates: `C:\bootcampSui_YYYYMMDD`
-   - Automatically opens VS Code in the project folder
-
-#### Step by Step:
-
-1. **Navigate to the `sui-one-click-installer` folder:**
+1. **Open the installer folder:**
    ```bash
    cd bootcampSui\sui-one-click-installer
    ```
@@ -70,41 +51,51 @@ This project includes a one-click installer for Windows that automatically insta
    - Select **"Run as administrator"**
    - Or simply double-click (the script will request permissions automatically)
 
-3. **Wait for installation:**
-   - The installer will use Chocolatey to install the programs
-   - The entire process will be logged in the `instalacao_sui.log` file
+3. **Wait for installation** (5-10 minutes depending on your internet speed)
 
 4. **Verify installation:**
-   - Open a **new PowerShell** (important: close and reopen)
-   - Run the commands to verify:
+   - Open a **NEW PowerShell window** (important: close and reopen)
+   - Run:
      ```bash
      sui --version
      git --version
      code --version
      ```
 
-5. **Next steps after installation:**
-   ```bash
-   # Configure Sui client
-   sui client
-   
-   # Select network (testnet/devnet/mainnet)
-   # Create new address
-   sui client new-address ed25519
-   
-   # Get test tokens (if needed)
-   sui client faucet
-   ```
+### 📦 **What Gets Installed Automatically**
 
-#### ⚠️ Troubleshooting
+✅ **Chocolatey** - Package manager for Windows  
+✅ **Sui CLI** - Latest version (command-line tool for Sui blockchain)  
+✅ **Git** - Version control system  
+✅ **Visual Studio Code** - Code editor  
+✅ **VS Code Extensions:**
+   - Prettier Move (code formatting)
+   - Sui Move (syntax highlighting and IntelliSense)
+   - Move Syntax (additional syntax support)  
+✅ **Sui First Steps Project** - Downloaded and extracted to `C:\bootcampSui`
 
-- If any command is not recognized after installation, **close and open a new terminal**
-- If installation fails, check the `instalacao_sui.log` file in the `sui-one-click-installer` folder
-- Make sure to run as administrator
+### 📂 **Installation Location**
 
-### 📦 Manual Installation
+- **Project:** `C:\bootcampSui` (or `C:\bootcampSui_YYYYMMDD` if folder exists)
+- **Log file:** `installation_sui.log` (in installer folder)
 
-If you prefer to install manually or are on another operating system:
+### ⚠️ **Important Notes**
+
+- **Run as administrator** - Required for installing software
+- **Close and reopen terminal** - After installation, open a new PowerShell to use commands
+- **Check log file** - If something fails, check `installation_sui.log` for details
+
+### 📖 **Detailed Instructions**
+
+For complete step-by-step instructions, see:
+- 📄 `sui-one-click-installer/README.txt` (English)
+- 📄 This file (README.en.md) - Full documentation
+
+---
+
+### 🔧 **Manual Installation (Alternative)**
+
+If you prefer to install manually or are not on Windows:
 
 1. **Install Sui CLI:**
    - Follow instructions at: [Sui Documentation](https://docs.sui.io/build/install)

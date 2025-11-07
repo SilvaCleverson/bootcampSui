@@ -82,10 +82,122 @@ function Install-Pkg {
 
 # Packages
 Install-Pkg -Name "sui"    -Title "Sui CLI"
-Install-Pkg -Name "suiup"  -Title "Suiup" -Optional
-Install-Pkg -Name "mvr"    -Title "MVR" -Optional
 Install-Pkg -Name "git"    -Title "Git"
 Install-Pkg -Name "vscode" -Title "Visual Studio Code"
+
+# Install suiup from GitHub releases
+# COMMENTED OUT - Uncomment if needed
+<#
+Write-Host ""
+Write-Host "Installing Suiup from GitHub..." -ForegroundColor Cyan
+try {
+    # Detect architecture
+    $arch = $env:PROCESSOR_ARCHITECTURE
+    $procArch = (Get-WmiObject Win32_Processor).Architecture
+    
+    if ($procArch -eq 9 -or $arch -eq "AMD64" -or $arch -eq "x86_64") {
+        $platform = "x86_64-pc-windows-msvc"
+        $archName = "x86_64"
+    } elseif ($procArch -eq 12 -or $arch -eq "ARM64") {
+        $platform = "aarch64-pc-windows-msvc"
+        $archName = "ARM64"
+    } else {
+        $platform = "x86_64-pc-windows-msvc"
+        $archName = "x86_64 (default)"
+    }
+    
+    Write-Host "  Detected architecture: $archName" -ForegroundColor Gray
+    
+    # suiup installs to %LOCALAPPDATA%\bin by default on Windows
+    $suiupBinPath = Join-Path $env:LOCALAPPDATA "bin"
+    $suiupExe = Join-Path $suiupBinPath "suiup.exe"
+    
+    # Create bin directory if it doesn't exist
+    if (-not (Test-Path $suiupBinPath)) {
+        New-Item -ItemType Directory -Path $suiupBinPath -Force | Out-Null
+    }
+    
+    # Try to download from latest release
+    # Try different possible URL formats
+    $suiupUrls = @(
+        "https://github.com/MystenLabs/suiup/releases/latest/download/suiup-$platform.exe",
+        "https://github.com/MystenLabs/suiup/releases/latest/download/suiup-$archName-windows.exe",
+        "https://github.com/MystenLabs/suiup/releases/latest/download/suiup.exe"
+    )
+    
+    $downloaded = $false
+    foreach ($suiupUrl in $suiupUrls) {
+        try {
+            Write-Host "  Trying: $suiupUrl" -ForegroundColor Gray
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            Invoke-WebRequest -Uri $suiupUrl -OutFile $suiupExe -UseBasicParsing -ErrorAction Stop
+            Write-Host "  [OK] Suiup downloaded successfully" -ForegroundColor Green
+            $downloaded = $true
+            break
+        } catch {
+            Write-Host "  Failed: $_" -ForegroundColor DarkGray
+            continue
+        }
+    }
+    
+    if (-not $downloaded) {
+        throw "Could not download suiup from any of the attempted URLs"
+    }
+    
+    # Add to PATH if not already there
+    $currentPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
+    if ($currentPath -notlike "*$suiupBinPath*") {
+        [System.Environment]::SetEnvironmentVariable("Path", "$currentPath;$suiupBinPath", "User")
+    }
+    $env:Path = "$env:Path;$suiupBinPath"
+    
+    # Wait a moment for suiup to be available
+    Start-Sleep -Seconds 2
+    
+    Write-Host "  [OK] Suiup installed successfully" -ForegroundColor Green
+} catch {
+    Write-Host "  [WARN] Failed to install Suiup: $_" -ForegroundColor Yellow
+    Write-Host "         You can install manually from: https://github.com/MystenLabs/suiup/releases" -ForegroundColor Yellow
+}
+#>
+
+# Install MVR using suiup (if suiup is available)
+# COMMENTED OUT - Uncomment if needed
+<#
+Write-Host ""
+Write-Host "Installing MVR via Suiup..." -ForegroundColor Cyan
+try {
+    # Update PATH to include suiup bin
+    $suiupBinPath = Join-Path $env:LOCALAPPDATA "bin"
+    $env:Path = "$env:Path;$suiupBinPath"
+    
+    # Wait a moment for suiup to be available
+    Start-Sleep -Seconds 2
+    
+    # Check if suiup is available
+    $suiupCheck = (suiup --version 2>&1)
+    Write-Host "  Checking suiup availability..."
+    
+    if ($LASTEXITCODE -eq 0 -or $suiupCheck -like "*suiup*" -or $suiupCheck -like "*version*") {
+        Write-Host "  Installing MVR via suiup..."
+        $mvrInstall = suiup install mvr 2>&1
+        Write-Host "  Output: $mvrInstall" -ForegroundColor Gray
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  [OK] MVR installed successfully via suiup" -ForegroundColor Green
+        } else {
+            Write-Host "  [WARN] MVR installation may have failed" -ForegroundColor Yellow
+            Write-Host "         You can try manually: suiup install mvr" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "  [INFO] Suiup not available yet, skipping MVR installation" -ForegroundColor Cyan
+        Write-Host "         Install MVR manually after suiup is ready: suiup install mvr" -ForegroundColor Gray
+    }
+} catch {
+    Write-Host "  [INFO] MVR installation skipped: $_" -ForegroundColor Cyan
+    Write-Host "         Install manually: suiup install mvr" -ForegroundColor Gray
+}
+#>
 
 # Validate updated PATH
 Write-Host ""
@@ -103,6 +215,7 @@ Write-Host ""
 Write-Host "1. Testing Sui CLI:" -ForegroundColor Yellow
 try {
     $suiVersion = sui --version 2>&1
+    Write-Host "   Output: $suiVersion" -ForegroundColor Gray
     if ($LASTEXITCODE -eq 0) {
         Write-Host "   [OK] $suiVersion" -ForegroundColor Green
     } else {
@@ -118,6 +231,7 @@ Write-Host ""
 Write-Host "2. Testing Git:" -ForegroundColor Yellow
 try {
     $gitVersion = git --version 2>&1
+    Write-Host "   Output: $gitVersion" -ForegroundColor Gray
     if ($LASTEXITCODE -eq 0) {
         Write-Host "   [OK] $gitVersion" -ForegroundColor Green
     } else {
@@ -130,39 +244,10 @@ try {
 }
 
 Write-Host ""
-Write-Host "3. Testing Suiup:" -ForegroundColor Yellow
-try {
-    $suiupVersion = suiup --version 2>&1
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "   [OK] $suiupVersion" -ForegroundColor Green
-    } else {
-        Write-Host "   [INFO] Suiup not installed (optional package)" -ForegroundColor Cyan
-        Write-Host "          Install manually if needed" -ForegroundColor Cyan
-    }
-} catch {
-    Write-Host "   [INFO] Suiup not installed (optional package)" -ForegroundColor Cyan
-    Write-Host "          Install manually if needed" -ForegroundColor Cyan
-}
-
-Write-Host ""
-Write-Host "4. Testing MVR:" -ForegroundColor Yellow
-try {
-    $mvrVersion = mvr --version 2>&1
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "   [OK] $mvrVersion" -ForegroundColor Green
-    } else {
-        Write-Host "   [INFO] MVR not installed (optional package)" -ForegroundColor Cyan
-        Write-Host "          Install manually if needed" -ForegroundColor Cyan
-    }
-} catch {
-    Write-Host "   [INFO] MVR not installed (optional package)" -ForegroundColor Cyan
-    Write-Host "          Install manually if needed" -ForegroundColor Cyan
-}
-
-Write-Host ""
-Write-Host "5. Testing VS Code:" -ForegroundColor Yellow
+Write-Host "3. Testing VS Code:" -ForegroundColor Yellow
 try {
     $codeVersion = code --version 2>&1 | Select-Object -First 1
+    Write-Host "   Output: $codeVersion" -ForegroundColor Gray
     if ($LASTEXITCODE -eq 0 -and $codeVersion) {
         Write-Host "   [OK] VS Code: $codeVersion" -ForegroundColor Green
     } else {
@@ -210,26 +295,44 @@ Write-Host ""
 Write-Host "Downloading Sui First Steps project..." -ForegroundColor Cyan
 
 $ProjetoUrl = "https://github.com/AguaPotavel/sui-first-steps/archive/refs/heads/main.zip"
-# Install project in C:\bootcampSui (or C:\bootcampSui_YYYYMMDD if exists)
+# Install project in C:\bootcampSui (or C:\bootcampSui_TIMESTAMP if exists)
 $PastaBase = "C:\bootcampSui"
 $ArquivoZip = Join-Path $env:TEMP "sui-first-steps-main.zip"
 
-# Check if C:\bootcampSui exists, if so, create folder with date
+# Initialize PastaBootcamp variable
+$PastaBootcamp = $null
+
+# Check if C:\bootcampSui exists, if so, create folder with unique timestamp
 if (Test-Path $PastaBase) {
-    $DataAtual = Get-Date -Format "yyyyMMdd"
-    $PastaBootcamp = "$PastaBase`_$DataAtual"
-    Write-Host "C:\bootcampSui already exists. Creating folder with date: $PastaBootcamp"
+    # Use timestamp with date, time, and milliseconds to ensure uniqueness
+    $Timestamp = Get-Date -Format "yyyyMMdd_HHmmss_fff"
+    $PastaBootcamp = "$PastaBase`_$Timestamp"
+    Write-Host "C:\bootcampSui already exists. Creating folder with unique timestamp: $PastaBootcamp" -ForegroundColor Yellow
 } else {
     $PastaBootcamp = $PastaBase
     Write-Host "Creating bootcampSui folder: $PastaBootcamp"
 }
 
+# Ensure PastaBootcamp is set
+if (-not $PastaBootcamp) {
+    $PastaBootcamp = $PastaBase
+}
+
 # Create folder if it doesn't exist
+Write-Host "Ensuring folder exists: $PastaBootcamp"
 if (-not (Test-Path $PastaBootcamp)) {
-    New-Item -ItemType Directory -Path $PastaBootcamp -Force | Out-Null
-    Write-Host "Folder created: $PastaBootcamp" -ForegroundColor Green
+    try {
+        New-Item -ItemType Directory -Path $PastaBootcamp -Force | Out-Null
+        Write-Host "  [OK] Folder created: $PastaBootcamp" -ForegroundColor Green
+    } catch {
+        Write-Host "  [ERROR] Failed to create folder: $_" -ForegroundColor Red
+        Write-Host "  Trying alternative location..." -ForegroundColor Yellow
+        $PastaBootcamp = Join-Path $env:USERPROFILE "bootcampSui"
+        New-Item -ItemType Directory -Path $PastaBootcamp -Force | Out-Null
+        Write-Host "  [OK] Folder created in alternative location: $PastaBootcamp" -ForegroundColor Green
+    }
 } else {
-    Write-Host "Using existing folder: $PastaBootcamp"
+    Write-Host "  [OK] Using existing folder: $PastaBootcamp" -ForegroundColor Green
 }
 
 # Download ZIP file

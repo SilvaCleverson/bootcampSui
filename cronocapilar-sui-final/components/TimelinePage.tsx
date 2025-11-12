@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
+import { useCurrentAccount, useSuiClient } from "@mysten/dapp-kit";
+import { PACKAGE_ID } from "@/lib/constants";
 
 interface TimelineEvent {
   id: string;
@@ -14,7 +16,11 @@ interface TimelineEvent {
 
 export function TimelinePage() {
   const { t, language } = useI18n();
+  const account = useCurrentAccount();
+  const suiClient = useSuiClient();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  
   // Carregar preferência salva ou usar "recente" como padrão
   const [sortOrder, setSortOrder] = useState<"recente" | "antigo">(() => {
     if (typeof window !== "undefined") {
@@ -32,108 +38,161 @@ export function TimelinePage() {
   }, [sortOrder]);
 
   useEffect(() => {
-    loadTimeline();
-    const interval = setInterval(loadTimeline, 1000);
-    return () => clearInterval(interval);
-  }, [language, sortOrder]);
+    if (account) {
+      loadOnChainTimeline();
+      // Atualizar a cada 5 segundos
+      const interval = setInterval(loadOnChainTimeline, 5000);
+      return () => clearInterval(interval);
+    } else {
+      setEvents([]);
+      setLoading(false);
+    }
+  }, [account, language, sortOrder]);
 
-  function loadTimeline() {
+  async function loadOnChainTimeline() {
+    if (!account || !suiClient) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     const allEvents: TimelineEvent[] = [];
 
-    // Evento do tipo de cabelo (com timestamp do perfil salvo)
-    const profile = localStorage.getItem("cronocapilar_profile");
-    if (profile) {
-      const { hairType } = JSON.parse(profile) as { hairType?: string };
-      // Usar timestamp do localStorage se existir, senão usar data atual
-      const profileTimestamp = localStorage.getItem("profile_created_at");
-      const validHairTypes = ["liso", "ondulado", "cacheado", "crespo"] as const;
-      const hairTypeKey = (hairType && validHairTypes.includes(hairType as any) ? hairType : "liso") as "liso" | "ondulado" | "cacheado" | "crespo";
-      const hairTypeLabel = t.hairTypes[hairTypeKey] as string;
-      allEvents.push({
-        id: "hairtype",
-        type: "hairtype",
-        date: profileTimestamp || new Date().toISOString(),
-        title: language === "pt-BR" ? "Perfil Criado" : language === "en-US" ? "Profile Created" : "Perfil Creado",
-        description: hairTypeLabel,
-        icon: "🌱",
-        color: "#3a5a40",
+    try {
+      // Buscar todos os objetos owned pelo endereço
+      const ownedObjects = await suiClient.getOwnedObjects({
+        owner: account.address,
+        options: {
+          showType: true,
+          showContent: true,
+        },
       });
-    }
 
-    // Eventos de registros
-    const records = localStorage.getItem("cronocapilar_events");
-    if (records) {
-      const eventsData = JSON.parse(records) as Array<{ id: string; type: string; date: string; description?: string }>;
-      eventsData.forEach((event) => {
-        const icons: Record<string, string> = {
-          bigchop: "✂️",
-          haircut: "💇‍♀️",
-          coloration: "🎨",
-          treatment: "💆‍♀️",
-        };
-      const titles: Record<string, string> = {
-        bigchop: "Big Chop",
-        haircut: language === "pt-BR" ? "Corte de Cabelo" : language === "en-US" ? "Haircut" : "Corte de Cabello",
-        coloration: language === "pt-BR" ? "Coloração" : language === "en-US" ? "Coloration" : "Coloración",
-        treatment: language === "pt-BR" ? "Tratamento" : language === "en-US" ? "Treatment" : "Tratamiento",
-      };
-        const eventType = event.type as string;
-        allEvents.push({
-          id: event.id,
-          type: event.type as TimelineEvent["type"],
-          date: event.date,
-          title: titles[eventType] || eventType,
-          description: event.description || "",
-          icon: icons[eventType] || "📅",
-          color: getColorForType(event.type as TimelineEvent["type"]),
-        });
-      });
-    }
+      // Processar cada objeto
+      for (const obj of ownedObjects.data) {
+        if (!obj.data) continue;
 
-    // Check-ins
-    const timeline = localStorage.getItem("cronocapilar_timeline");
-    if (timeline) {
-      const checkIns = JSON.parse(timeline) as Array<{ type: string; date: string }>;
-      checkIns.forEach((event, index) => {
-        const icons: Record<string, string> = {
-          hydration: "💧",
-          nutrition: "🥑",
-          reconstruction: "🧬",
-        };
-        const titles: Record<string, string> = {
-          hydration: t.treatments.hydration,
-          nutrition: t.treatments.nutrition,
-          reconstruction: t.treatments.reconstruction,
-        };
-        const eventType = event.type as string;
-        allEvents.push({
-          id: `checkin-${index}`,
-          type: "checkin",
-          date: event.date,
-          title: titles[eventType] || eventType,
-          description: language === "pt-BR" ? "Check-in diário" : language === "en-US" ? "Daily check-in" : "Check-in diario",
-          icon: icons[eventType] || "💆‍♀️",
-          color: getColorForCheckIn(event.type as "hydration" | "nutrition" | "reconstruction"),
-        });
-      });
-    }
+        const objectType = obj.data.type;
+        const objectId = obj.data.objectId;
 
-    // Ordenar por data baseado no sortOrder
-    allEvents.sort((a, b) => {
-      const timeA = new Date(a.date).getTime();
-      const timeB = new Date(b.date).getTime();
-      // Se os tempos forem iguais, ordenar pelo ID para consistência
-      if (timeA === timeB) {
-        return sortOrder === "recente" 
-          ? b.id.localeCompare(a.id)
-          : a.id.localeCompare(b.id);
+        // Verificar se é um Profile
+        if (objectType && objectType.includes(`${PACKAGE_ID}::profile::Profile`)) {
+          const content = obj.data.content as any;
+          if (content && content.fields) {
+            const hairType = content.fields.hair_type || [];
+            const createdAt = content.fields.created_at || Date.now();
+            
+            // Converter bytes para string
+            const hairTypeStr = new TextDecoder().decode(new Uint8Array(hairType));
+            const validHairTypes = ["liso", "ondulado", "cacheado", "crespo"] as const;
+            const hairTypeKey = (validHairTypes.includes(hairTypeStr as any) ? hairTypeStr : "liso") as "liso" | "ondulado" | "cacheado" | "crespo";
+            const hairTypeLabel = t.hairTypes[hairTypeKey] as string;
+            
+            allEvents.push({
+              id: objectId,
+              type: "hairtype",
+              date: new Date(Number(createdAt)).toISOString(),
+              title: language === "pt-BR" ? "Perfil Criado" : language === "en-US" ? "Profile Created" : "Perfil Creado",
+              description: hairTypeLabel,
+              icon: "🌱",
+              color: "#3a5a40",
+            });
+          }
+        }
+
+        // Verificar se é um Treatment
+        if (objectType && objectType.includes(`${PACKAGE_ID}::profile::Treatment`)) {
+          const content = obj.data.content as any;
+          if (content && content.fields) {
+            const treatmentType = content.fields.treatment_type || [];
+            const timestamp = content.fields.timestamp || Date.now();
+            
+            // Converter bytes para string
+            const treatmentTypeStr = new TextDecoder().decode(new Uint8Array(treatmentType));
+            const icons: Record<string, string> = {
+              hydration: "💧",
+              nutrition: "🥑",
+              reconstruction: "🧬",
+            };
+            const titles: Record<string, string> = {
+              hydration: t.treatments.hydration,
+              nutrition: t.treatments.nutrition,
+              reconstruction: t.treatments.reconstruction,
+            };
+            
+            allEvents.push({
+              id: objectId,
+              type: "checkin",
+              date: new Date(Number(timestamp)).toISOString(),
+              title: titles[treatmentTypeStr] || treatmentTypeStr,
+              description: language === "pt-BR" ? "Check-in diário" : language === "en-US" ? "Daily check-in" : "Check-in diario",
+              icon: icons[treatmentTypeStr] || "💆‍♀️",
+              color: getColorForCheckIn(treatmentTypeStr as "hydration" | "nutrition" | "reconstruction"),
+            });
+          }
+        }
+
+        // Verificar se é um Event
+        if (objectType && objectType.includes(`${PACKAGE_ID}::profile::Event`)) {
+          const content = obj.data.content as any;
+          if (content && content.fields) {
+            const eventType = content.fields.event_type || [];
+            const timestamp = content.fields.timestamp || Date.now();
+            const description = content.fields.description || [];
+            
+            // Converter bytes para string
+            const eventTypeStr = new TextDecoder().decode(new Uint8Array(eventType));
+            const descriptionStr = description.length > 0 
+              ? new TextDecoder().decode(new Uint8Array(description))
+              : "";
+            
+            const icons: Record<string, string> = {
+              bigchop: "✂️",
+              haircut: "💇‍♀️",
+              coloration: "🎨",
+              treatment: "💆‍♀️",
+            };
+            const titles: Record<string, string> = {
+              bigchop: "Big Chop",
+              haircut: language === "pt-BR" ? "Corte de Cabelo" : language === "en-US" ? "Haircut" : "Corte de Cabello",
+              coloration: language === "pt-BR" ? "Coloração" : language === "en-US" ? "Coloration" : "Coloración",
+              treatment: language === "pt-BR" ? "Tratamento" : language === "en-US" ? "Treatment" : "Tratamiento",
+            };
+            
+            allEvents.push({
+              id: objectId,
+              type: eventTypeStr as TimelineEvent["type"],
+              date: new Date(Number(timestamp)).toISOString(),
+              title: titles[eventTypeStr] || eventTypeStr,
+              description: descriptionStr,
+              icon: icons[eventTypeStr] || "📅",
+              color: getColorForType(eventTypeStr),
+            });
+          }
+        }
       }
-      // Ordenar por data: recente = mais novo primeiro, antigo = mais antigo primeiro
-      return sortOrder === "recente" 
-        ? timeB - timeA  // Mais recente primeiro
-        : timeA - timeB; // Mais antigo primeiro
-    });
-    setEvents(allEvents);
+
+      // Ordenar por data baseado no sortOrder
+      allEvents.sort((a, b) => {
+        const timeA = new Date(a.date).getTime();
+        const timeB = new Date(b.date).getTime();
+        if (timeA === timeB) {
+          return sortOrder === "recente" 
+            ? b.id.localeCompare(a.id)
+            : a.id.localeCompare(b.id);
+        }
+        return sortOrder === "recente" 
+          ? timeB - timeA
+          : timeA - timeB;
+      });
+      
+      setEvents(allEvents);
+    } catch (error) {
+      console.error("Erro ao carregar timeline on-chain:", error);
+      setEvents([]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   function getColorForType(type: string) {
@@ -193,19 +252,55 @@ export function TimelinePage() {
     }
   }
 
+  if (!account) {
+    return (
+      <div style={{ textAlign: "center", padding: 48 }}>
+        <div style={{ fontSize: 48, marginBottom: 12 }}>🔗</div>
+        <h3 style={{ fontSize: 18, color: "#3a5a40", marginBottom: 8 }}>
+          {language === "pt-BR" ? "Conecte sua Carteira" : language === "en-US" ? "Connect Your Wallet" : "Conecta tu Carteira"}
+        </h3>
+        <p style={{ fontSize: 14, color: "#666" }}>
+          {language === "pt-BR" 
+            ? "Conecte sua carteira Sui para ver sua timeline on-chain" 
+            : language === "en-US"
+            ? "Connect your Sui wallet to see your on-chain timeline"
+            : "Conecta tu carteira Sui para ver tu timeline on-chain"}
+        </p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", padding: 48 }}>
+        <div style={{ fontSize: 48, marginBottom: 12 }}>⏳</div>
+        <h3 style={{ fontSize: 18, color: "#3a5a40", marginBottom: 8 }}>
+          {language === "pt-BR" ? "Carregando..." : language === "en-US" ? "Loading..." : "Cargando..."}
+        </h3>
+        <p style={{ fontSize: 14, color: "#666" }}>
+          {language === "pt-BR" 
+            ? "Buscando dados on-chain..." 
+            : language === "en-US"
+            ? "Fetching on-chain data..."
+            : "Buscando datos on-chain..."}
+        </p>
+      </div>
+    );
+  }
+
   if (events.length === 0) {
     return (
       <div style={{ textAlign: "center", padding: 48 }}>
         <div style={{ fontSize: 48, marginBottom: 12 }}>📅</div>
         <h3 style={{ fontSize: 18, color: "#3a5a40", marginBottom: 8 }}>
-          {language === "pt-BR" ? "Sua Timeline" : language === "en-US" ? "Your Timeline" : "Tu Timeline"}
+          {language === "pt-BR" ? "Sua Timeline On-Chain" : language === "en-US" ? "Your On-Chain Timeline" : "Tu Timeline On-Chain"}
         </h3>
         <p style={{ fontSize: 14, color: "#666" }}>
           {language === "pt-BR" 
-            ? "Comece registrando eventos e check-ins!" 
+            ? "Comece registrando eventos e check-ins on-chain!" 
             : language === "en-US"
-            ? "Start by registering events and check-ins!"
-            : "¡Comienza registrando eventos y check-ins!"}
+            ? "Start by registering events and check-ins on-chain!"
+            : "¡Comienza registrando eventos y check-ins on-chain!"}
         </p>
       </div>
     );
@@ -234,7 +329,7 @@ export function TimelinePage() {
             fontWeight: 700,
             margin: 0 
           }}>
-            {language === "pt-BR" ? "Sua Jornada Capilar" : language === "en-US" ? "Your Hair Journey" : "Tu Jornada Capilar"}
+            {language === "pt-BR" ? "Sua Jornada Capilar On-Chain" : language === "en-US" ? "Your On-Chain Hair Journey" : "Tu Jornada Capilar On-Chain"}
           </h3>
         </div>
         <div style={{ 
@@ -456,12 +551,11 @@ export function TimelinePage() {
         </div>
         <div style={{ fontSize: 13, opacity: 0.95, fontWeight: 500 }}>
           {events.length === 1 
-            ? (language === "pt-BR" ? "evento registrado" : language === "en-US" ? "event recorded" : "evento registrado")
-            : (language === "pt-BR" ? "eventos registrados" : language === "en-US" ? "events recorded" : "eventos registrados")
+            ? (language === "pt-BR" ? "evento on-chain registrado" : language === "en-US" ? "on-chain event recorded" : "evento on-chain registrado")
+            : (language === "pt-BR" ? "eventos on-chain registrados" : language === "en-US" ? "on-chain events recorded" : "eventos on-chain registrados")
           }
         </div>
       </div>
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
 // Package ID publicado na devnet
-export const PACKAGE_ID = "0x60b1d16a20b4e8f9dd4a47e76ea57cdc10ed9ac4c28a2c163240bbc1051bdf2b";
+export const PACKAGE_ID = "0x9102fbafd6900f9a06d1db65eb6b7dec4bd1eebe00ea531b75665ebf290e804e";
 
 // Módulo e funções do contrato
 export const MODULE_NAME = "profile";

@@ -154,7 +154,7 @@ cronocapilar-sui-final/
 
 O projeto utiliza smart contracts Move publicados na Sui devnet:
 
-- **Package ID**: `0x6531470ba7bc8d4682855b54ba8cb6940146ffd1322ea0902aae534633f0101a`
+- **Package ID**: `0x60b1d16a20b4e8f9dd4a47e76ea57cdc10ed9ac4c28a2c163240bbc1051bdf2b`
 - **Módulo**: `profile`
 - **Funções principais**:
   - `create_profile` - Criar perfil on-chain
@@ -162,6 +162,8 @@ O projeto utiliza smart contracts Move publicados na Sui devnet:
   - `register_event` - Registrar evento capilar
 
 O código dos smart contracts está em: `../sources/desafios/cronocapilar.move`
+
+> **Nota:** O Package ID também está visível no rodapé da aplicação para facilitar testes.
 
 ---
 
@@ -181,6 +183,15 @@ O idioma é detectado automaticamente baseado nas configurações do navegador, 
 
 Para ver o checklist completo de funcionalidades, consulte:
 - [CHECKLIST_SUI.md](./CHECKLIST_SUI.md)
+
+---
+
+## 🚀 Deploy e Publicação
+
+Para publicar o CronoCapilar online, consulte o guia completo:
+- [DEPLOY.md](./DEPLOY.md) - Guia completo com todas as opções de hospedagem
+
+**Recomendação:** Use **Vercel** para o melhor suporte a Next.js e deploy mais simples.
 
 ---
 

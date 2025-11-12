@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
+import { useCurrentAccount, useSuiClient } from "@mysten/dapp-kit";
+import { PACKAGE_ID } from "@/lib/constants";
 
 interface TreatmentEvent {
   type: "hydration" | "nutrition" | "reconstruction";
@@ -9,24 +11,75 @@ interface TreatmentEvent {
 
 export function Timeline() {
   const { t, language } = useI18n();
+  const account = useCurrentAccount();
+  const suiClient = useSuiClient();
   const [events, setEvents] = useState<TreatmentEvent[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadTimeline();
-    // Atualizar quando os dados mudarem
-    const interval = setInterval(loadTimeline, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    if (account && suiClient) {
+      loadOnChainTreatments();
+      // Atualizar a cada 5 segundos
+      const interval = setInterval(loadOnChainTreatments, 5000);
+      return () => clearInterval(interval);
+    } else {
+      setEvents([]);
+    }
+  }, [account, suiClient]);
 
-  function loadTimeline() {
-    const timeline = localStorage.getItem("cronocapilar_timeline");
-    if (timeline) {
-      const events = JSON.parse(timeline);
+  async function loadOnChainTreatments() {
+    if (!account || !suiClient) return;
+
+    setLoading(true);
+    try {
+      // Buscar todos os objetos owned pelo endereço
+      const ownedObjects = await suiClient.getOwnedObjects({
+        owner: account.address,
+        options: {
+          showType: true,
+          showContent: true,
+        },
+      });
+
+      const treatmentEvents: TreatmentEvent[] = [];
+
+      // Processar cada objeto
+      for (const obj of ownedObjects.data) {
+        if (!obj.data) continue;
+
+        const objectType = obj.data.type;
+
+        // Verificar se é um Treatment
+        if (objectType && objectType.includes(`${PACKAGE_ID}::profile::Treatment`)) {
+          const content = obj.data.content as any;
+          if (content && content.fields) {
+            const treatmentType = content.fields.treatment_type || [];
+            const timestamp = content.fields.timestamp || Date.now();
+            
+            // Converter bytes para string
+            const treatmentTypeStr = new TextDecoder().decode(new Uint8Array(treatmentType));
+            
+            if (treatmentTypeStr === "hydration" || treatmentTypeStr === "nutrition" || treatmentTypeStr === "reconstruction") {
+              treatmentEvents.push({
+                type: treatmentTypeStr as "hydration" | "nutrition" | "reconstruction",
+                date: new Date(Number(timestamp)).toISOString(),
+              });
+            }
+          }
+        }
+      }
+
       // Ordenar por data (mais recente primeiro)
-      events.sort((a: TreatmentEvent, b: TreatmentEvent) => 
+      treatmentEvents.sort((a, b) => 
         new Date(b.date).getTime() - new Date(a.date).getTime()
       );
-      setEvents(events);
+      
+      setEvents(treatmentEvents);
+    } catch (error) {
+      console.error("Erro ao carregar tratamentos on-chain:", error);
+      setEvents([]);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -65,6 +118,49 @@ export function Timeline() {
     return t.treatments[type];
   }
 
+  if (!account) {
+    return (
+      <div
+        style={{
+          background: "rgba(255,255,255,0.95)",
+          borderRadius: 20,
+          padding: 32,
+          textAlign: "center",
+          border: "1px solid #e0e0e0",
+        }}
+      >
+        <div style={{ fontSize: 48, marginBottom: 16 }}>🔗</div>
+        <h3 style={{ margin: 0, fontSize: 18, color: "#3a5a40", marginBottom: 8 }}>
+          {language === "pt-BR" ? "Conecte sua Carteira" : "Connect Your Wallet"}
+        </h3>
+        <p style={{ fontSize: 14, color: "#666" }}>
+          {language === "pt-BR" 
+            ? "Conecte sua carteira para ver tratamentos on-chain" 
+            : "Connect your wallet to see on-chain treatments"}
+        </p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          background: "rgba(255,255,255,0.95)",
+          borderRadius: 20,
+          padding: 32,
+          textAlign: "center",
+          border: "1px solid #e0e0e0",
+        }}
+      >
+        <div style={{ fontSize: 48, marginBottom: 16 }}>⏳</div>
+        <h3 style={{ margin: 0, fontSize: 18, color: "#3a5a40", marginBottom: 8 }}>
+          {language === "pt-BR" ? "Carregando..." : "Loading..."}
+        </h3>
+      </div>
+    );
+  }
+
   if (events.length === 0) {
     return (
       <div
@@ -78,12 +174,12 @@ export function Timeline() {
       >
         <div style={{ fontSize: 48, marginBottom: 16 }}>📅</div>
         <h3 style={{ margin: 0, fontSize: 18, color: "#3a5a40", marginBottom: 8 }}>
-          {language === "pt-BR" ? "Nenhum registro ainda" : "No records yet"}
+          {language === "pt-BR" ? "Nenhum registro on-chain ainda" : "No on-chain records yet"}
         </h3>
         <p style={{ fontSize: 14, color: "#666" }}>
           {language === "pt-BR" 
-            ? "Comece fazendo seu primeiro check-in!" 
-            : "Start by making your first check-in!"}
+            ? "Comece fazendo seu primeiro check-in on-chain!" 
+            : "Start by making your first on-chain check-in!"}
         </p>
       </div>
     );
@@ -99,7 +195,7 @@ export function Timeline() {
       }}
     >
       <h3 style={{ margin: "0 0 24px 0", fontSize: 18, color: "#3a5a40" }}>
-        📅 {language === "pt-BR" ? "Timeline de Tratamentos" : "Treatment Timeline"}
+        📅 {language === "pt-BR" ? "Timeline de Tratamentos On-Chain" : "On-Chain Treatment Timeline"}
       </h3>
 
       <div style={{ maxHeight: "400px", overflowY: "auto" }}>
@@ -150,9 +246,8 @@ export function Timeline() {
           textAlign: "center",
         }}
       >
-        📊 {events.length} {language === "pt-BR" ? "tratamentos registrados" : "treatments recorded"}
+        📊 {events.length} {language === "pt-BR" ? "tratamentos on-chain registrados" : "on-chain treatments recorded"}
       </div>
     </div>
   );
 }
-

@@ -10,7 +10,7 @@ import { Tabs } from "@/components/Tabs";
 import { EventRegister } from "@/components/EventRegister";
 import { TimelinePage } from "@/components/TimelinePage";
 import LoginModal from "@/components/LoginModal";
-import { useCurrentAccount, useDisconnectWallet, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
+import { useCurrentAccount, useDisconnectWallet, useSignAndExecuteTransaction, useCurrentWallet, useSuiClient } from "@mysten/dapp-kit";
 import { formatAddress } from "@mysten/sui/utils";
 import { Transaction } from "@mysten/sui/transactions";
 import { PACKAGE_ID, MODULE_NAME, FUNCTION_CREATE_PROFILE, FUNCTION_REGISTER_TREATMENT } from "@/lib/constants";
@@ -18,8 +18,57 @@ import { PACKAGE_ID, MODULE_NAME, FUNCTION_CREATE_PROFILE, FUNCTION_REGISTER_TRE
 function Dashboard() {
   const { t, language } = useI18n();
   const account = useCurrentAccount();
+  const wallet = useCurrentWallet();
+  const suiClient = useSuiClient();
   const { mutate: disconnect } = useDisconnectWallet();
   const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  
+  // Pegar a rede atual da carteira conectada
+  const getCurrentNetwork = (): "mainnet" | "testnet" | "devnet" => {
+    if (!wallet || !account) {
+      return "devnet"; // Default quando não conectado
+    }
+    
+    // O account tem a informação da chain ativa
+    // Tenta pegar do account.chains que é a chain ATIVA, não todas as suportadas
+    if (account && 'chains' in account) {
+      const accountChains = (account as any).chains;
+      if (accountChains && accountChains.length > 0) {
+        // Pega a primeira chain do account (que é a ativa)
+        const activeChain = accountChains[0];
+        const network = activeChain.includes(':') ? activeChain.split(':')[1] : activeChain;
+        if (network === 'mainnet' || network === 'testnet' || network === 'devnet') {
+          return network;
+        }
+      }
+    }
+    
+    // Tenta pegar de wallet.chains (pode ser a chain ativa)
+    if (wallet.chains && wallet.chains.length > 0) {
+      const chain = wallet.chains[0];
+      const network = chain.includes(':') ? chain.split(':')[1] : chain;
+      if (network === 'mainnet' || network === 'testnet' || network === 'devnet') {
+        return network;
+      }
+    }
+    
+    // Tenta inferir pela URL do SuiClient (mais confiável)
+    try {
+      const clientUrl = (suiClient as any)?.transport?.url || (suiClient as any)?.url || '';
+      if (clientUrl) {
+        if (clientUrl.includes('mainnet.sui.io')) return 'mainnet';
+        if (clientUrl.includes('testnet.sui.io')) return 'testnet';
+        if (clientUrl.includes('devnet.sui.io')) return 'devnet';
+      }
+    } catch (e) {
+      // Ignora erro
+    }
+    
+    // Default
+    return 'devnet';
+  };
+  
+  const currentNetwork = getCurrentNetwork();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("profile");
   const [isSavingOnChain, setIsSavingOnChain] = useState(false);
@@ -545,8 +594,47 @@ function Dashboard() {
               </div>
             </div>
             
-            {/* Link do Website */}
+            {/* Link do Website e Badge de Rede */}
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              {/* Badge de Rede */}
+              {account && (
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "6px 12px",
+                  borderRadius: 12,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                  background: currentNetwork === "mainnet" 
+                    ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
+                    : currentNetwork === "testnet"
+                    ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
+                    : "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)"
+                }}>
+                  <span style={{ 
+                    width: 6, 
+                    height: 6, 
+                    borderRadius: "50%", 
+                    background: "white",
+                    boxShadow: "0 0 4px rgba(255, 255, 255, 0.5)"
+                  }} />
+                  <span>
+                    {currentNetwork === "mainnet" 
+                      ? (language === "pt-BR" ? "Mainnet" : language === "en-US" ? "Mainnet" : "Mainnet")
+                      : currentNetwork === "testnet"
+                      ? (language === "pt-BR" ? "Testnet" : language === "en-US" ? "Testnet" : "Testnet")
+                      : (language === "pt-BR" ? "Devnet" : language === "en-US" ? "Devnet" : "Devnet")
+                    }
+                  </span>
+                </div>
+              )}
+              
               <a
                 href="https://cronogramacapilar.com.br"
                 target="_blank"
@@ -640,6 +728,45 @@ function Dashboard() {
           
           {/* Link do Website e Wallet Info */}
           <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            {/* Badge de Rede */}
+            {account && (
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "6px 12px",
+                borderRadius: 12,
+                fontSize: 11,
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+                background: currentNetwork === "mainnet" 
+                  ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
+                  : currentNetwork === "testnet"
+                  ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
+                  : "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+                color: "white",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+                border: "1px solid rgba(255, 255, 255, 0.2)"
+              }}>
+                <span style={{ 
+                  width: 6, 
+                  height: 6, 
+                  borderRadius: "50%", 
+                  background: "white",
+                  boxShadow: "0 0 4px rgba(255, 255, 255, 0.5)"
+                }} />
+                <span>
+                  {currentNetwork === "mainnet" 
+                    ? (language === "pt-BR" ? "Mainnet" : language === "en-US" ? "Mainnet" : "Mainnet")
+                    : currentNetwork === "testnet"
+                    ? (language === "pt-BR" ? "Testnet" : language === "en-US" ? "Testnet" : "Testnet")
+                    : (language === "pt-BR" ? "Devnet" : language === "en-US" ? "Devnet" : "Devnet")
+                  }
+                </span>
+              </div>
+            )}
+            
             <a
               href="https://cronogramacapilar.com.br"
               target="_blank"

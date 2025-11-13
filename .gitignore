@@ -44,3 +44,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Documentação de sessões (não versionar)
+SESSAO_*.md
+

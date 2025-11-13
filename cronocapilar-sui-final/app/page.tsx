@@ -13,7 +13,7 @@ import LoginModal from "@/components/LoginModal";
 import { useCurrentAccount, useDisconnectWallet, useSignAndExecuteTransaction, useCurrentWallet, useSuiClient } from "@mysten/dapp-kit";
 import { formatAddress } from "@mysten/sui/utils";
 import { Transaction } from "@mysten/sui/transactions";
-import { PACKAGE_ID, MODULE_NAME, FUNCTION_CREATE_PROFILE, FUNCTION_REGISTER_TREATMENT } from "@/lib/constants";
+import { PACKAGE_ID, MODULE_NAME, FUNCTION_CREATE_PROFILE, FUNCTION_REGISTER_TREATMENT, BUILD_TIMESTAMP } from "@/lib/constants";
 
 function Dashboard() {
   const { t, language } = useI18n();
@@ -911,9 +911,14 @@ function Dashboard() {
           </a>
         </div>
 
-        {/* Package ID */}
+        {/* Package ID e Build Timestamp */}
         <div style={{ marginTop: 12, fontSize: 10, fontFamily: "monospace", wordBreak: "break-all", opacity: 0.7, padding: "8px 12px", background: "rgba(102, 126, 234, 0.05)", borderRadius: 8 }}>
-          Package ID: <span style={{ color: "#667eea", fontWeight: 600 }}>{PACKAGE_ID}</span>
+          <div style={{ marginBottom: 4 }}>
+            Package ID: <span style={{ color: "#667eea", fontWeight: 600 }}>{PACKAGE_ID}</span>
+          </div>
+          <div>
+            Build: <span style={{ color: "#667eea", fontWeight: 600 }}>{BUILD_TIMESTAMP}</span>
+          </div>
         </div>
       </footer>
 
@@ -1617,9 +1622,14 @@ function Dashboard() {
           {t.footer.builtFor} • 💜 {t.footer.madeWithLove}
         </div>
         
-        {/* Package ID */}
+        {/* Package ID e Build Timestamp */}
         <div style={{ marginTop: 12, fontSize: 10, fontFamily: "monospace", wordBreak: "break-all", opacity: 0.7, padding: "8px 12px", background: "rgba(102, 126, 234, 0.05)", borderRadius: 8 }}>
-          Package ID: <span style={{ color: "#667eea", fontWeight: 600 }}>{PACKAGE_ID}</span>
+          <div style={{ marginBottom: 4 }}>
+            Package ID: <span style={{ color: "#667eea", fontWeight: 600 }}>{PACKAGE_ID}</span>
+          </div>
+          <div>
+            Build: <span style={{ color: "#667eea", fontWeight: 600 }}>{BUILD_TIMESTAMP}</span>
+          </div>
         </div>
       </footer>
 

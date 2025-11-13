@@ -44,7 +44,7 @@ function Dashboard() {
     }
     
     // Tenta pegar de wallet.chains (pode ser a chain ativa)
-    if (wallet.chains && wallet.chains.length > 0) {
+    if (wallet && 'chains' in wallet && wallet.chains && Array.isArray(wallet.chains) && wallet.chains.length > 0) {
       const chain = wallet.chains[0];
       const network = chain.includes(':') ? chain.split(':')[1] : chain;
       if (network === 'mainnet' || network === 'testnet' || network === 'devnet') {

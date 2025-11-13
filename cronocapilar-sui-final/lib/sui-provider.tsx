@@ -7,7 +7,7 @@ import { ReactNode } from "react";
 
 const queryClient = new QueryClient();
 
-// Configuração para testnet
+// Configuração para mainnet, testnet e devnet
 const networks = {
   testnet: { url: getFullnodeUrl("testnet") },
   mainnet: { url: getFullnodeUrl("mainnet") },
@@ -17,7 +17,7 @@ const networks = {
 export function SuiWalletProvider({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <SuiClientProvider networks={networks} defaultNetwork="devnet">
+      <SuiClientProvider networks={networks} defaultNetwork="mainnet">
         <WalletProvider autoConnect>
           {children}
         </WalletProvider>

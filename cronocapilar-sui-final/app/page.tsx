@@ -138,7 +138,7 @@ function Dashboard() {
     return null;
   }
 
-  // Detectar mudança de carteira e carregar perfil (on-chain primeiro, depois localStorage)
+  // Detectar mudança de carteira/rede e carregar perfil (on-chain primeiro, depois localStorage)
   useEffect(() => {
     if (!account) {
       // Se não há conta, limpar tudo
@@ -151,9 +151,11 @@ function Dashboard() {
     }
 
     const savedWalletAddress = localStorage.getItem("cronocapilar_wallet_address");
+    const savedNetwork = localStorage.getItem("cronocapilar_network");
 
-    // Se a carteira mudou, limpar o perfil
-    if (savedWalletAddress && savedWalletAddress !== account.address) {
+    // Se a carteira mudou OU a rede mudou, limpar o perfil
+    if ((savedWalletAddress && savedWalletAddress !== account.address) || 
+        (savedNetwork && savedNetwork !== currentNetwork)) {
       // Limpar perfil local
       setHairType("");
       setHairLength("");
@@ -163,8 +165,9 @@ function Dashboard() {
       localStorage.removeItem("profile_onchain_saved");
       localStorage.removeItem("profile_onchain_tx");
       localStorage.removeItem("profile_created_at");
-      // Salvar nova carteira
+      // Salvar nova carteira e rede
       localStorage.setItem("cronocapilar_wallet_address", account.address);
+      localStorage.setItem("cronocapilar_network", currentNetwork);
     }
 
     // Buscar perfil on-chain primeiro
@@ -176,7 +179,7 @@ function Dashboard() {
         setHairTexture(onChainProfile.hairTexture);
         setOnChainSaved(true);
         
-        // Salvar no localStorage também para cache
+        // Salvar no localStorage também para cache (com a rede atual)
         localStorage.setItem("cronocapilar_profile", JSON.stringify({
           hairType: onChainProfile.hairType,
           hairLength: onChainProfile.hairLength,
@@ -185,17 +188,19 @@ function Dashboard() {
         }));
         localStorage.setItem("profile_onchain_saved", "true");
         localStorage.setItem("cronocapilar_wallet_address", account.address);
+        localStorage.setItem("cronocapilar_network", currentNetwork);
       } else {
-        // Se não encontrou on-chain, tentar localStorage
+        // Se não encontrou on-chain, tentar localStorage (só se for a mesma rede)
         const savedProfile = localStorage.getItem("cronocapilar_profile");
-        if (savedProfile && savedWalletAddress === account.address) {
+        if (savedProfile && savedWalletAddress === account.address && savedNetwork === currentNetwork) {
           const profile = JSON.parse(savedProfile);
           setHairType(profile.hairType || "");
           setHairLength(profile.hairLength || "");
           setHairTexture(profile.hairTexture || "");
         } else {
-          // Primeira vez com esta carteira, salvar endereço
+          // Primeira vez com esta carteira/rede, salvar endereço e rede
           localStorage.setItem("cronocapilar_wallet_address", account.address);
+          localStorage.setItem("cronocapilar_network", currentNetwork);
         }
       }
 
@@ -211,7 +216,7 @@ function Dashboard() {
       
       setProfileLoaded(true);
     });
-  }, [account, suiClient]);
+  }, [account, suiClient, currentNetwork]);
 
   // Carregar tratamentos on-chain
   async function loadTreatmentsOnChain() {

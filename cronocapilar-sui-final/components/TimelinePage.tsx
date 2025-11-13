@@ -20,6 +20,7 @@ export function TimelinePage() {
   const suiClient = useSuiClient();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [timeUntilUpdate, setTimeUntilUpdate] = useState<number>(1800); // 30 minutos em segundos
   
   // Carregar preferência salva ou usar "recente" como padrão
   const [sortOrder, setSortOrder] = useState<"recente" | "antigo">(() => {
@@ -40,12 +41,32 @@ export function TimelinePage() {
   useEffect(() => {
     if (account) {
       loadOnChainTimeline();
-      // Atualizar a cada 5 segundos
-      const interval = setInterval(loadOnChainTimeline, 5000);
-      return () => clearInterval(interval);
+      setTimeUntilUpdate(1800); // 30 minutos
+      
+      // Atualizar a cada 30 minutos
+      const interval = setInterval(() => {
+        loadOnChainTimeline();
+        setTimeUntilUpdate(1800);
+      }, 1800000); // 30 minutos em milissegundos
+      
+      // Contador regressivo
+      const countdown = setInterval(() => {
+        setTimeUntilUpdate((prev) => {
+          if (prev <= 1) {
+            return 1800;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+      return () => {
+        clearInterval(interval);
+        clearInterval(countdown);
+      };
     } else {
       setEvents([]);
       setLoading(false);
+      setTimeUntilUpdate(1800);
     }
   }, [account, language, sortOrder]);
 
@@ -332,6 +353,62 @@ export function TimelinePage() {
             {language === "pt-BR" ? "Sua Jornada Capilar On-Chain" : language === "en-US" ? "Your On-Chain Hair Journey" : "Tu Jornada Capilar On-Chain"}
           </h3>
         </div>
+        
+        {/* Indicador de atualização on-chain com Disclaimer */}
+        {account && (
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 12,
+            marginBottom: 12,
+            flexWrap: "wrap"
+          }}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "6px 12px",
+              background: "rgba(102, 126, 234, 0.08)",
+              borderRadius: 12,
+              fontSize: 11,
+              color: "#667eea",
+              fontWeight: 500
+            }}>
+              <span style={{ fontSize: 14 }}>⏳</span>
+              <span>
+                {language === "pt-BR" 
+                  ? `Próxima atualização em ${Math.floor(timeUntilUpdate / 60)}min`
+                  : language === "en-US"
+                  ? `Next update in ${Math.floor(timeUntilUpdate / 60)}min`
+                  : `Próxima actualización en ${Math.floor(timeUntilUpdate / 60)}min`}
+              </span>
+            </div>
+            
+            {/* Disclaimer */}
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "6px 12px",
+              background: "rgba(255, 193, 7, 0.1)",
+              borderRadius: 12,
+              border: "1px solid rgba(255, 193, 7, 0.3)",
+              fontSize: 11,
+              color: "#856404",
+              fontWeight: 500
+            }}>
+              <span>⚠️</span>
+              <span>
+                {language === "pt-BR" 
+                  ? "Apresentação Bootcamp Sui"
+                  : language === "en-US"
+                  ? "Bootcamp Sui Presentation"
+                  : "Presentación Bootcamp Sui"}
+              </span>
+            </div>
+          </div>
+        )}
         <div style={{ 
           display: "flex", 
           alignItems: "center", 

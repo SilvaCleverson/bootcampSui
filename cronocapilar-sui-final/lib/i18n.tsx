@@ -24,7 +24,7 @@ const translations = {
       noData: "—",
     },
     footer: {
-      builtFor: "Criado para Sui Blockchain · MVP teste local",
+      builtFor: "Criado para Sui Blockchain",
       madeWithLove: "Feito com amor",
     },
     language: {
@@ -127,7 +127,7 @@ const translations = {
       noData: "—",
     },
     footer: {
-      builtFor: "Built for Sui Blockchain · MVP local test",
+      builtFor: "Built for Sui Blockchain",
       madeWithLove: "Made with love",
     },
     language: {
@@ -230,7 +230,7 @@ const translations = {
       noData: "—",
     },
     footer: {
-      builtFor: "Creado para Sui Blockchain · MVP prueba local",
+      builtFor: "Creado para Sui Blockchain",
       madeWithLove: "Hecho con amor",
     },
     language: {

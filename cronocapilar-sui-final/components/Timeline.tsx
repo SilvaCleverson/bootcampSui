@@ -15,15 +15,36 @@ export function Timeline() {
   const suiClient = useSuiClient();
   const [events, setEvents] = useState<TreatmentEvent[]>([]);
   const [loading, setLoading] = useState(false);
+  const [timeUntilUpdate, setTimeUntilUpdate] = useState<number>(1800); // 30 minutos em segundos
 
   useEffect(() => {
     if (account && suiClient) {
       loadOnChainTreatments();
-      // Atualizar a cada 5 segundos
-      const interval = setInterval(loadOnChainTreatments, 5000);
-      return () => clearInterval(interval);
+      setTimeUntilUpdate(1800); // 30 minutos
+      
+      // Atualizar a cada 30 minutos
+      const interval = setInterval(() => {
+        loadOnChainTreatments();
+        setTimeUntilUpdate(1800);
+      }, 1800000); // 30 minutos em milissegundos
+      
+      // Contador regressivo
+      const countdown = setInterval(() => {
+        setTimeUntilUpdate((prev) => {
+          if (prev <= 1) {
+            return 1800;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+      return () => {
+        clearInterval(interval);
+        clearInterval(countdown);
+      };
     } else {
       setEvents([]);
+      setTimeUntilUpdate(1800);
     }
   }, [account, suiClient]);
 
@@ -194,9 +215,31 @@ export function Timeline() {
         border: "1px solid #e0e0e0",
       }}
     >
-      <h3 style={{ margin: "0 0 24px 0", fontSize: 18, color: "#3a5a40" }}>
-        📅 {language === "pt-BR" ? "Timeline de Tratamentos On-Chain" : "On-Chain Treatment Timeline"}
-      </h3>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+        <h3 style={{ margin: 0, fontSize: 18, color: "#3a5a40" }}>
+          📅 {language === "pt-BR" ? "Timeline de Tratamentos On-Chain" : "On-Chain Treatment Timeline"}
+        </h3>
+        
+        {/* Indicador de atualização on-chain */}
+        {account && (
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "4px 10px",
+            background: "rgba(102, 126, 234, 0.08)",
+            borderRadius: 10,
+            fontSize: 10,
+            color: "#667eea",
+            fontWeight: 500
+          }}>
+            <span style={{ fontSize: 12 }}>⏳</span>
+            <span>
+              {Math.floor(timeUntilUpdate / 60)}min
+            </span>
+          </div>
+        )}
+      </div>
 
       <div style={{ maxHeight: "400px", overflowY: "auto" }}>
         {events.map((event, index) => (

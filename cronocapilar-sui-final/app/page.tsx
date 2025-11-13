@@ -741,7 +741,30 @@ function Dashboard() {
             </div>
             
             {/* Link do Website e Badge de Rede */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+              {/* Disclaimer no Header */}
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "6px 12px",
+                background: "rgba(255, 193, 7, 0.1)",
+                borderRadius: 12,
+                border: "1px solid rgba(255, 193, 7, 0.3)",
+                fontSize: 10,
+                color: "#856404",
+                fontWeight: 500
+              }}>
+                <span>⚠️</span>
+                <span>
+                  {language === "pt-BR" 
+                    ? "Apresentação Bootcamp Sui"
+                    : language === "en-US"
+                    ? "Bootcamp Sui Presentation"
+                    : "Presentación Bootcamp Sui"}
+                </span>
+              </div>
+              
               {/* Badge de Rede */}
               {account && (
                 <div style={{
@@ -816,6 +839,84 @@ function Dashboard() {
       {/* Mensagem de conexão obrigatória */}
       <WalletRequiredMessage />
 
+      {/* Footer com Disclaimer */}
+      <footer style={{ marginTop: 32, fontSize: 12, color: "#666", textAlign: "center", padding: "24px 16px", lineHeight: "1.8", background: "rgba(102, 126, 234, 0.03)", borderRadius: 16 }}>
+        {/* Disclaimer */}
+        <div style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(255, 193, 7, 0.1)", borderRadius: 12, border: "1px solid rgba(255, 193, 7, 0.3)" }}>
+          <p style={{ margin: 0, fontSize: 11, color: "#856404", fontWeight: 500 }}>
+            ⚠️ <strong>Disclaimer:</strong> {language === "pt-BR" 
+              ? "Este site é apenas para apresentação final do Bootcamp Sui. Não é um produto comercial."
+              : language === "en-US"
+              ? "This site is for Bootcamp Sui final presentation only. Not a commercial product."
+              : "Este sitio es solo para la presentación final del Bootcamp Sui. No es un producto comercial."}
+          </p>
+        </div>
+
+        {/* Links Sui */}
+        <div style={{ marginBottom: 12 }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6, marginRight: 12 }}>
+            <img 
+              src="/LogoSui.jpg" 
+              alt="Sui Logo" 
+              style={{ width: 18, height: 18, objectFit: "contain", verticalAlign: "middle" }}
+            />
+            <strong style={{ color: "#667eea" }}>Sui:</strong>
+          </span>
+          <a 
+            href="https://sui.io" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ color: "#667eea", textDecoration: "none", margin: "0 8px", fontWeight: 500 }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+          >
+            Website
+          </a>
+          <span style={{ color: "#999" }}>•</span>
+          <a 
+            href="https://docs.sui.io" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ color: "#667eea", textDecoration: "none", margin: "0 8px", fontWeight: 500 }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+          >
+            Docs
+          </a>
+          <span style={{ color: "#999" }}>•</span>
+          <a 
+            href="https://github.com/MystenLabs/sui" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ color: "#667eea", textDecoration: "none", margin: "0 8px", fontWeight: 500 }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+          >
+            GitHub
+          </a>
+        </div>
+
+        {/* Links Bootcamp */}
+        <div style={{ marginBottom: 12 }}>
+          <strong style={{ color: "#667eea" }}>Bootcamp Sui Brasil:</strong>
+          <a 
+            href="https://github.com/SilvaCleverson/bootcampSui" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ color: "#667eea", textDecoration: "none", margin: "0 8px", fontWeight: 500 }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+          >
+            Repositório GitHub
+          </a>
+        </div>
+
+        {/* Package ID */}
+        <div style={{ marginTop: 12, fontSize: 10, fontFamily: "monospace", wordBreak: "break-all", opacity: 0.7, padding: "8px 12px", background: "rgba(102, 126, 234, 0.05)", borderRadius: 8 }}>
+          Package ID: <span style={{ color: "#667eea", fontWeight: 600 }}>{PACKAGE_ID}</span>
+        </div>
+      </footer>
+
       {/* Modal de Login */}
       <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </>
@@ -874,6 +975,29 @@ function Dashboard() {
           
           {/* Link do Website e Wallet Info */}
           <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            {/* Disclaimer no Header */}
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "6px 12px",
+              background: "rgba(255, 193, 7, 0.1)",
+              borderRadius: 12,
+              border: "1px solid rgba(255, 193, 7, 0.3)",
+              fontSize: 10,
+              color: "#856404",
+              fontWeight: 500
+            }}>
+              <span>⚠️</span>
+              <span>
+                {language === "pt-BR" 
+                  ? "Apresentação Bootcamp Sui"
+                  : language === "en-US"
+                  ? "Bootcamp Sui Presentation"
+                  : "Presentación Bootcamp Sui"}
+              </span>
+            </div>
+            
             {/* Badge de Rede */}
             {account && (
               <div style={{

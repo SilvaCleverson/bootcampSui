@@ -2,9 +2,11 @@
 
 > **Transforma sua rotina capilar em prova on-chain de autocuidado**
 
-### ⚠️ **Status: Em Desenvolvimento Ativo**
+### ✅ **Status: Deploy em Produção**
 
-Este projeto está em desenvolvimento contínuo. Funcionalidades podem estar incompletas ou sujeitas a mudanças. Use com cautela em produção.
+**🌐 Aplicação Online:** [https://bootcamp-sui.vercel.app](https://bootcamp-sui.vercel.app)
+
+⚠️ **Disclaimer:** Este site é apenas para apresentação final do Bootcamp Sui. Não é um produto comercial.
 
 ---
 
@@ -56,14 +58,12 @@ Este projeto está em desenvolvimento contínuo. Funcionalidades podem estar inc
 - [x] Estatísticas e acompanhamento
 - [x] Internacionalização completa
 - [x] Design responsivo
-
-### 🚧 Em Desenvolvimento
-
-- [ ] Recuperação de dados on-chain
-- [ ] Visualização de histórico completo
-- [ ] Compartilhamento de perfil
-- [ ] Sistema de gamificação
-- [ ] Notificações e lembretes
+- [x] **Carregamento automático de dados on-chain**
+- [x] **Detecção dinâmica de rede (Mainnet/Testnet/Devnet)**
+- [x] **Atualização automática a cada 30 minutos**
+- [x] **Contador visual de tempo até próxima atualização**
+- [x] **Deploy na Vercel**
+- [x] **Disclaimer e links para Sui e Bootcamp**
 
 ---
 
@@ -152,18 +152,27 @@ cronocapilar-sui-final/
 
 ## 🔗 Smart Contracts
 
-O projeto utiliza smart contracts Move publicados na Sui devnet:
+O projeto utiliza smart contracts Move publicados na blockchain Sui:
 
-- **Package ID**: `0x60b1d16a20b4e8f9dd4a47e76ea57cdc10ed9ac4c28a2c163240bbc1051bdf2b`
+- **Package ID**: `0x9102fbafd6900f9a06d1db65eb6b7dec4bd1eebe00ea531b75665ebf290e804e`
+- **Rede**: Suporta Mainnet, Testnet e Devnet (detecção automática)
 - **Módulo**: `profile`
 - **Funções principais**:
   - `create_profile` - Criar perfil on-chain
-  - `register_treatment` - Registrar tratamento
-  - `register_event` - Registrar evento capilar
+  - `register_treatment` - Registrar tratamento capilar
+  - `register_event` - Registrar evento capilar (Big Chop, Cortes, Colorações)
+
+### 📝 Estruturas de Dados
+
+- **Profile**: Armazena informações do perfil capilar (tipo, comprimento, textura)
+- **Treatment**: Registra tratamentos realizados (Hidratação, Nutrição, Reconstrução)
+- **Event**: Registra eventos importantes (Big Chop, Cortes, Colorações)
 
 O código dos smart contracts está em: `../sources/desafios/cronocapilar.move`
 
 > **Nota:** O Package ID também está visível no rodapé da aplicação para facilitar testes.
+> 
+> ⚠️ **Importante:** O Package ID pode mudar se o contrato for republicado (especialmente após resets do Devnet).
 
 ---
 
@@ -177,6 +186,16 @@ O projeto suporta 3 idiomas:
 
 O idioma é detectado automaticamente baseado nas configurações do navegador, mas pode ser alterado manualmente através do seletor de idioma.
 
+## 🌐 Detecção de Rede
+
+O aplicativo detecta automaticamente a rede Sui conectada:
+
+- **Mainnet**: Rede principal da Sui
+- **Testnet**: Rede de testes pública
+- **Devnet**: Rede de desenvolvimento (pode ser resetada periodicamente)
+
+A detecção é feita dinamicamente baseada na carteira conectada, garantindo que os dados sejam buscados da rede correta.
+
 ---
 
 ## 📝 Checklist de Implementação
@@ -188,17 +207,29 @@ Para ver o checklist completo de funcionalidades, consulte:
 
 ## 🚀 Deploy e Publicação
 
-Para publicar o CronoCapilar online, consulte o guia completo:
+### ✅ Deploy Atual
+
+O CronoCapilar está **deployado e funcionando** na Vercel:
+- **URL:** [https://bootcamp-sui.vercel.app](https://bootcamp-sui.vercel.app)
+- **Plataforma:** Vercel
+- **Deploy automático:** Ativado via GitHub
+
+### 📖 Guia de Deploy
+
+Para mais informações sobre deploy, consulte:
 - [DEPLOY.md](./DEPLOY.md) - Guia completo com todas as opções de hospedagem
 
 **Recomendação:** Use **Vercel** para o melhor suporte a Next.js e deploy mais simples.
 
 ---
 
-## 🐛 Problemas Conhecidos
+## 🔄 Atualização de Dados On-Chain
 
-- ⚠️ Dados on-chain ainda não são recuperados automaticamente ao conectar a carteira
-- ⚠️ Algumas funcionalidades podem apresentar comportamento inesperado durante desenvolvimento
+O aplicativo atualiza automaticamente os dados on-chain a cada **30 minutos**. Um contador visual mostra o tempo restante até a próxima atualização.
+
+- ⏳ **Indicador de atualização**: Mostra "Próxima atualização em Xmin"
+- 🔄 **Atualização automática**: Dados são buscados da blockchain automaticamente
+- 💾 **Cache local**: Dados são armazenados localmente para melhor performance
 
 ---
 
@@ -226,5 +257,5 @@ Desenvolvido durante o **Sui Move Bootcamp Brasil** (Novembro 2025)
 
 **Desenvolvido com ❤️ e muito café ☕**
 
-*Última atualização: Novembro 2025*
+*Última atualização: Dezembro 2024*
 

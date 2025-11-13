@@ -10,9 +10,13 @@
 
 ## 🌟 **CronoCapilar - Projeto Principal**
 
-### ⚠️ **Status: Em Desenvolvimento**
+### ✅ **Status: Deploy em Produção**
 
 > **O CronoCapilar é o projeto principal e mais completo deste repositório, demonstrando uma aplicação Web3 completa integrada com a blockchain Sui.**
+>
+> **🌐 Aplicação Online:** [https://bootcamp-sui.vercel.app](https://bootcamp-sui.vercel.app)
+>
+> ⚠️ **Disclaimer:** Este site é apenas para apresentação final do Bootcamp Sui. Não é um produto comercial.
 
 ### 📱 **Sobre o Projeto**
 
@@ -31,19 +35,26 @@
 - ✅ Sistema de check-in diário
 - ✅ Estatísticas e acompanhamento de progresso
 - ✅ Armazenamento descentralizado na blockchain Sui
+- ✅ Carregamento automático de dados on-chain
+- ✅ Detecção dinâmica de rede (Mainnet/Testnet/Devnet)
+- ✅ Atualização automática a cada 30 minutos
+- ✅ Interface multilíngue (PT-BR, EN-US, ES-ES)
 
 ### 📂 **Localização do Projeto**
 
 O projeto está localizado em: `cronocapilar-sui-final/`
 
-### 🚧 **Aviso Importante**
+### ⚠️ **Aviso Importante**
 
-**Este projeto está em desenvolvimento ativo.** Funcionalidades podem estar incompletas ou sujeitas a mudanças. Use com cautela em produção.
+**Este projeto é uma apresentação final do Bootcamp Sui.** Não é um produto comercial. O CronoCapilar está deployado e funcional, mas foi desenvolvido para fins educacionais e de demonstração.
 
 ### 🔗 **Links Relacionados**
 
+- 🌐 [Aplicação Online - CronoCapilar](https://bootcamp-sui.vercel.app)
 - 📄 [Checklist de Implementação](cronocapilar-sui-final/CHECKLIST_SUI.md)
 - 📦 [Package.json](cronocapilar-sui-final/package.json)
+- 🔗 [Sui Blockchain](https://sui.io)
+- 🎓 [Sui Move Bootcamp Brasil](https://luma.com/wxsj6hjy)
 
 ---
 

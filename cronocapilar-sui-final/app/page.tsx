@@ -90,7 +90,55 @@ function Dashboard() {
     reconstruction: { count: 0, lastDate: null as string | null },
   });
 
-  // Detectar mudança de carteira e limpar perfil
+  // Carregar perfil on-chain
+  async function loadProfileOnChain() {
+    if (!account || !suiClient) return null;
+
+    try {
+      // Buscar todos os objetos owned pelo endereço
+      const ownedObjects = await suiClient.getOwnedObjects({
+        owner: account.address,
+        options: {
+          showType: true,
+          showContent: true,
+        },
+      });
+
+      // Procurar por objeto Profile
+      for (const obj of ownedObjects.data) {
+        if (!obj.data) continue;
+
+        const objectType = obj.data.type;
+        
+        // Verificar se é um Profile
+        if (objectType && objectType.includes(`${PACKAGE_ID}::profile::Profile`)) {
+          const content = obj.data.content as any;
+          if (content && content.fields) {
+            const hairTypeBytes = content.fields.hair_type || [];
+            const hairLengthBytes = content.fields.hair_length || [];
+            const hairTextureBytes = content.fields.hair_texture || [];
+            
+            // Converter bytes para string
+            const hairType = new TextDecoder().decode(new Uint8Array(hairTypeBytes));
+            const hairLength = hairLengthBytes.length > 0 
+              ? new TextDecoder().decode(new Uint8Array(hairLengthBytes))
+              : "";
+            const hairTexture = hairTextureBytes.length > 0
+              ? new TextDecoder().decode(new Uint8Array(hairTextureBytes))
+              : "";
+            
+            return { hairType, hairLength, hairTexture, onChain: true };
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao carregar perfil on-chain:", error);
+    }
+    
+    return null;
+  }
+
+  // Detectar mudança de carteira e carregar perfil (on-chain primeiro, depois localStorage)
   useEffect(() => {
     if (!account) {
       // Se não há conta, limpar tudo
@@ -102,7 +150,6 @@ function Dashboard() {
       return;
     }
 
-    const savedProfile = localStorage.getItem("cronocapilar_profile");
     const savedWalletAddress = localStorage.getItem("cronocapilar_wallet_address");
 
     // Se a carteira mudou, limpar o perfil
@@ -118,41 +165,140 @@ function Dashboard() {
       localStorage.removeItem("profile_created_at");
       // Salvar nova carteira
       localStorage.setItem("cronocapilar_wallet_address", account.address);
+    }
+
+    // Buscar perfil on-chain primeiro
+    loadProfileOnChain().then((onChainProfile) => {
+      if (onChainProfile) {
+        // Se encontrou on-chain, usar esses dados
+        setHairType(onChainProfile.hairType);
+        setHairLength(onChainProfile.hairLength);
+        setHairTexture(onChainProfile.hairTexture);
+        setOnChainSaved(true);
+        
+        // Salvar no localStorage também para cache
+        localStorage.setItem("cronocapilar_profile", JSON.stringify({
+          hairType: onChainProfile.hairType,
+          hairLength: onChainProfile.hairLength,
+          hairTexture: onChainProfile.hairTexture,
+          onChain: true,
+        }));
+        localStorage.setItem("profile_onchain_saved", "true");
+        localStorage.setItem("cronocapilar_wallet_address", account.address);
+      } else {
+        // Se não encontrou on-chain, tentar localStorage
+        const savedProfile = localStorage.getItem("cronocapilar_profile");
+        if (savedProfile && savedWalletAddress === account.address) {
+          const profile = JSON.parse(savedProfile);
+          setHairType(profile.hairType || "");
+          setHairLength(profile.hairLength || "");
+          setHairTexture(profile.hairTexture || "");
+        } else {
+          // Primeira vez com esta carteira, salvar endereço
+          localStorage.setItem("cronocapilar_wallet_address", account.address);
+        }
+      }
+
+      // Carregar data do Big Chop (opcional)
+      const savedBigChop = localStorage.getItem("bigChopDate");
+      if (savedBigChop) {
+        setBigChopDate(savedBigChop);
+        const today = new Date();
+        const bigChop = new Date(savedBigChop);
+        const diffDays = Math.floor((today.getTime() - bigChop.getTime()) / (1000 * 60 * 60 * 24));
+        setDaysSinceBigChop(diffDays);
+      }
+      
       setProfileLoaded(true);
+    });
+  }, [account, suiClient]);
+
+  // Carregar tratamentos on-chain
+  async function loadTreatmentsOnChain() {
+    if (!account || !suiClient) return null;
+
+    try {
+      // Buscar todos os objetos owned pelo endereço
+      const ownedObjects = await suiClient.getOwnedObjects({
+        owner: account.address,
+        options: {
+          showType: true,
+          showContent: true,
+        },
+      });
+
+      const treatmentsCount = {
+        hydration: { count: 0, lastDate: null as string | null },
+        nutrition: { count: 0, lastDate: null as string | null },
+        reconstruction: { count: 0, lastDate: null as string | null },
+      };
+
+      // Processar cada objeto
+      for (const obj of ownedObjects.data) {
+        if (!obj.data) continue;
+
+        const objectType = obj.data.type;
+
+        // Verificar se é um Treatment
+        if (objectType && objectType.includes(`${PACKAGE_ID}::profile::Treatment`)) {
+          const content = obj.data.content as any;
+          if (content && content.fields) {
+            const treatmentType = content.fields.treatment_type || [];
+            const timestamp = content.fields.timestamp || Date.now();
+            
+            // Converter bytes para string
+            const treatmentTypeStr = new TextDecoder().decode(new Uint8Array(treatmentType));
+            
+            if (treatmentTypeStr === "hydration" || treatmentTypeStr === "nutrition" || treatmentTypeStr === "reconstruction") {
+              const type = treatmentTypeStr as "hydration" | "nutrition" | "reconstruction";
+              treatmentsCount[type].count += 1;
+              
+              // Atualizar última data se for mais recente
+              const treatmentDate = new Date(Number(timestamp)).toISOString();
+              if (!treatmentsCount[type].lastDate || treatmentDate > treatmentsCount[type].lastDate) {
+                treatmentsCount[type].lastDate = treatmentDate;
+              }
+            }
+          }
+        }
+      }
+
+      return treatmentsCount;
+    } catch (error) {
+      console.error("Erro ao carregar tratamentos on-chain:", error);
+    }
+    
+    return null;
+  }
+
+  // Carregar tratamentos (on-chain primeiro, depois localStorage)
+  useEffect(() => {
+    if (!account || !suiClient) {
+      // Se não há conta, tentar localStorage
+      const savedTreatments = localStorage.getItem("cronocapilar_treatments");
+      if (savedTreatments) {
+        setTreatments(JSON.parse(savedTreatments));
+      }
       return;
     }
 
-    // Se é a mesma carteira, carregar perfil
-    if (savedProfile && savedWalletAddress === account.address) {
-      const profile = JSON.parse(savedProfile);
-      setHairType(profile.hairType || "");
-      setHairLength(profile.hairLength || "");
-      setHairTexture(profile.hairTexture || "");
-    } else {
-      // Primeira vez com esta carteira, salvar endereço
-      localStorage.setItem("cronocapilar_wallet_address", account.address);
-    }
-
-    // Carregar data do Big Chop (opcional)
-    const savedBigChop = localStorage.getItem("bigChopDate");
-    if (savedBigChop) {
-      setBigChopDate(savedBigChop);
-      const today = new Date();
-      const bigChop = new Date(savedBigChop);
-      const diffDays = Math.floor((today.getTime() - bigChop.getTime()) / (1000 * 60 * 60 * 24));
-      setDaysSinceBigChop(diffDays);
-    }
-    
-    setProfileLoaded(true);
-  }, [account]);
-
-  // Carregar tratamentos salvos
-  useEffect(() => {
-    const savedTreatments = localStorage.getItem("cronocapilar_treatments");
-    if (savedTreatments) {
-      setTreatments(JSON.parse(savedTreatments));
-    }
-  }, []);
+    // Buscar tratamentos on-chain primeiro
+    loadTreatmentsOnChain().then((onChainTreatments) => {
+      if (onChainTreatments) {
+        // Se encontrou on-chain, usar esses dados
+        setTreatments(onChainTreatments);
+        
+        // Salvar no localStorage também para cache
+        localStorage.setItem("cronocapilar_treatments", JSON.stringify(onChainTreatments));
+      } else {
+        // Se não encontrou on-chain, tentar localStorage
+        const savedTreatments = localStorage.getItem("cronocapilar_treatments");
+        if (savedTreatments) {
+          setTreatments(JSON.parse(savedTreatments));
+        }
+      }
+    });
+  }, [account, suiClient]);
 
   // Salvar perfil
   function saveProfile(type: string) {
@@ -1271,17 +1417,84 @@ function Dashboard() {
       />
 
       {/* Footer */}
-      <footer style={{ marginTop: 32, fontSize: 12, color: "#666", textAlign: "center", padding: "16px", lineHeight: "1.8" }}>
-        {t.footer.builtFor} • <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <img 
-            src="/LogoSui.jpg" 
-            alt="Sui Logo" 
-            style={{ width: 20, height: 20, objectFit: "contain", verticalAlign: "middle" }}
-          />
-          <strong style={{ color: "#667eea" }}>Sui</strong>
-        </span> • 💜 {t.footer.madeWithLove}
-        <br />
-        <div style={{ marginTop: 8, fontSize: 11, fontFamily: "monospace", wordBreak: "break-all", opacity: 0.7 }}>
+      <footer style={{ marginTop: 32, fontSize: 12, color: "#666", textAlign: "center", padding: "24px 16px", lineHeight: "1.8", background: "rgba(102, 126, 234, 0.03)", borderRadius: 16 }}>
+        {/* Disclaimer */}
+        <div style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(255, 193, 7, 0.1)", borderRadius: 12, border: "1px solid rgba(255, 193, 7, 0.3)" }}>
+          <p style={{ margin: 0, fontSize: 11, color: "#856404", fontWeight: 500 }}>
+            ⚠️ <strong>Disclaimer:</strong> {language === "pt-BR" 
+              ? "Este site é apenas para apresentação final do Bootcamp Sui. Não é um produto comercial."
+              : language === "en-US"
+              ? "This site is for Bootcamp Sui final presentation only. Not a commercial product."
+              : "Este sitio es solo para la presentación final del Bootcamp Sui. No es un producto comercial."}
+          </p>
+        </div>
+
+        {/* Links Sui */}
+        <div style={{ marginBottom: 12 }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6, marginRight: 12 }}>
+            <img 
+              src="/LogoSui.jpg" 
+              alt="Sui Logo" 
+              style={{ width: 18, height: 18, objectFit: "contain", verticalAlign: "middle" }}
+            />
+            <strong style={{ color: "#667eea" }}>Sui:</strong>
+          </span>
+          <a 
+            href="https://sui.io" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ color: "#667eea", textDecoration: "none", margin: "0 8px", fontWeight: 500 }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+          >
+            Website
+          </a>
+          <span style={{ color: "#999" }}>•</span>
+          <a 
+            href="https://docs.sui.io" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ color: "#667eea", textDecoration: "none", margin: "0 8px", fontWeight: 500 }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+          >
+            Docs
+          </a>
+          <span style={{ color: "#999" }}>•</span>
+          <a 
+            href="https://github.com/MystenLabs/sui" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ color: "#667eea", textDecoration: "none", margin: "0 8px", fontWeight: 500 }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+          >
+            GitHub
+          </a>
+        </div>
+
+        {/* Links Bootcamp */}
+        <div style={{ marginBottom: 12 }}>
+          <strong style={{ color: "#667eea" }}>Bootcamp Sui Brasil:</strong>
+          <a 
+            href="https://github.com/SilvaCleverson/bootcampSui" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ color: "#667eea", textDecoration: "none", margin: "0 8px", fontWeight: 500 }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+          >
+            Repositório GitHub
+          </a>
+        </div>
+
+        {/* Info */}
+        <div style={{ marginTop: 12, fontSize: 11, opacity: 0.8 }}>
+          {t.footer.builtFor} • 💜 {t.footer.madeWithLove}
+        </div>
+        
+        {/* Package ID */}
+        <div style={{ marginTop: 12, fontSize: 10, fontFamily: "monospace", wordBreak: "break-all", opacity: 0.7, padding: "8px 12px", background: "rgba(102, 126, 234, 0.05)", borderRadius: 8 }}>
           Package ID: <span style={{ color: "#667eea", fontWeight: 600 }}>{PACKAGE_ID}</span>
         </div>
       </footer>
